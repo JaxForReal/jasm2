@@ -1,0 +1,5 @@
+branching syntax
+make easier to generate code (compiler into jasm2)
+how to handle function declarations?
+nested functions?
+how to pass data to syscalls without hardcoded argument addresses

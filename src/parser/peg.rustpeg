@@ -1,0 +1,84 @@
+use super::Value;
+use super::Command;
+
+#[export]
+program -> Vec<Command<'input>>
+    = __ prog:(command ++ ";") ";" __ { prog }
+
+#[export]
+command -> Command<'input>
+    = binary_ops
+    / unary_ops
+    / func
+    / call
+    / ret
+
+binary_ops -> Command<'input>
+    = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
+    {
+        match command {
+            "add" => Command::Add(l, r, dest),
+            "sub" => Command::Sub(l, r, dest),
+            "mul" => Command::Mul(l, r, dest),
+            "div" => Command::Div(l, r, dest),
+            _ => panic!("unidentified command")
+        }
+    }
+
+unary_ops -> Command<'input>
+    = __ command:identifier __ arg:value __ arrow __ dest:value
+    {
+        match command {
+            "invert" => Command::Invert(arg, dest),
+            "valueof" => Command::ValueOf(arg, dest),
+            _ => panic!("unidentified command")
+        }
+    }
+
+arrow = "->"
+
+func -> Command<'input>
+    = __ "<" name:identifier ">" __ { Command::Func(name) }
+
+call -> Command<'input>
+    = __ "call" __ name:identifier __ { Command::Call(name) }
+
+ret -> Command<'input>
+    = __ "ret" __ { Command::Ret }
+
+identifier -> &'input str
+    = [a-z_]+ { match_str }
+
+////////////
+//WHITESPACE
+////////////
+
+__ =
+    (whitespace / eol_char / comment)*
+
+comment
+  = "//" ( .)* eol_char
+
+whitespace
+    = [ \t]+
+
+eol_char
+  = [\n\r\u2028\u2029]
+
+///////////////
+//NUMBER VALUES
+///////////////
+
+#[export]
+value -> Value
+    = i:integer { Value::U32(i) }
+    / "@" v:value { Value::Address(Box::new(v)) }
+
+integer -> u32
+    = decimal_integer / binary_integer
+
+decimal_integer -> u32
+    = [0-9]+ { match_str.parse::<u32>().unwrap() }
+
+binary_integer -> u32
+    = "b" [0-1]+ { u32::from_str_radix(&match_str[1..], 2).unwrap() }
