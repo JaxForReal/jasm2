@@ -1,0 +1,18 @@
+human-readable version:
+
+binary operators:
+add, sub, mul, div
+
+syntax:
+operator value value -> destination
+
+value is one of the following:
+address: @3, the value at address 3
+decimal value: 34, the value 45
+binary value: b10010110101, the value represented by binary
+
+
+example:
+add @5 @6 -> 7
+
+gets the values at 5 and 6, add them, and stores the reault in address 7
