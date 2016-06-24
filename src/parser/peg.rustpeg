@@ -12,6 +12,8 @@ command -> Command<'input>
     / func
     / call
     / ret
+    / label
+    / jump
 
 binary_ops -> Command<'input>
     = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
@@ -21,6 +23,9 @@ binary_ops -> Command<'input>
             "sub" => Command::Sub(l, r, dest),
             "mul" => Command::Mul(l, r, dest),
             "div" => Command::Div(l, r, dest),
+            "leftshift" => Command::LeftShift(l, r, dest),
+            "rightshift" => Command::RightShift(l, r, dest),
+            "compare" => Command::Compare(l, r, dest),
             _ => panic!("unidentified command")
         }
     }
@@ -37,6 +42,7 @@ unary_ops -> Command<'input>
 
 arrow = "->"
 
+//<func_name>;
 func -> Command<'input>
     = __ "<" name:identifier ">" __ { Command::Func(name) }
 
@@ -45,6 +51,20 @@ call -> Command<'input>
 
 ret -> Command<'input>
     = __ "ret" __ { Command::Ret }
+
+label -> Command<'input>
+    = __ "label" __ label:identifier { Command::Label(label) }
+
+jump -> Command<'input>
+    = __ command:identifier __ val:value __ label:identifier __
+    {
+        match command {
+            "jumpzero" => Command::JumpZero(val, label),
+            "jumpnotzero" => Command::JumpNotZero(val, label),
+            _ => panic!("unrecognised jump command")
+        }
+    }
+
 
 identifier -> &'input str
     = [a-z_]+ { match_str }

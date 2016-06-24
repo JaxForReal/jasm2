@@ -4,7 +4,7 @@ binary operators:
 add, sub, mul, div
 
 syntax:
-operator value value -> destination
+operator value value -> destination;
 
 value is one of the following:
 address: @3, the value at address 3
@@ -13,6 +13,43 @@ binary value: b10010110101, the value represented by binary
 
 
 example:
-add @5 @6 -> 7
+add @5 @6 -> 7;
 
 gets the values at 5 and 6, add them, and stores the reault in address 7
+
+unary operators:
+operator value -> destination;
+
+functions:
+
+<func_name>;
+commands;
+more commands;
+ret;
+
+calling a function:
+call func_name;
+
+
+COMPARE COMMAND:
+compares two values and returns a flag list.
+compare value value -> destination;
+
+ex. compare @5 b0110 -> 6;
+
+compare FLAGS:
+binary value: 
+<least significant>
+0 equal
+1 not equal
+2 greater than
+3 less than 
+4 less than or equal
+5 greater than or equal
+<most significant>
+
+to find if value is not equal
+
+<notequal_10and11>;
+compare @10 @11 -> 12
+and @12 b0010

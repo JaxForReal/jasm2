@@ -12,13 +12,18 @@ pub enum Value {
 
 #[derive(Debug)]
 pub enum Command<'a> {
-    // BinOp(arg1, arg2, destination)
+    // BinaryOp(arg1, arg2, destination)
     Add(Value, Value, Value),
     Sub(Value, Value, Value),
     Div(Value, Value, Value),
     Mul(Value, Value, Value),
+    // shift(value_to_shift, amount, destination)
+    LeftShift(Value, Value, Value),
+    RightShift(Value, Value, Value),
 
-    // UnOp(arg, destination)
+    Compare(Value, Value, Value),
+
+    // UnaryOp(arg, destination)
     Invert(Value, Value),
     ValueOf(Value, Value),
 
@@ -28,6 +33,13 @@ pub enum Command<'a> {
     // execute function
     // Call(name)
     Call(&'a str),
+
+    // defines a label at this point in code
+    Label(&'a str),
+
+    // JumpConditional(flag_address, label)
+    JumpZero(Value, &'a str),
+    JumpNotZero(Value, &'a str),
 
     Ret,
 }

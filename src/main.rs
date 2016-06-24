@@ -2,7 +2,7 @@
 #![plugin(peg_syntax_ext)]
 
 pub mod parser;
-pub mod vm;
+// pub mod vm;
 
 fn main() {
     println!("{:?}",

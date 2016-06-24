@@ -27,4 +27,9 @@ impl Vm {
             Value::Address(address) => self.ram[get_value(&address)]
         }
     }
+
+    //retirives the <index> value of ram. If it is ouside the vector length, auto grows vector
+    ram_addr(&mut self, index: usize) -> u32 {
+
+    }
 }
