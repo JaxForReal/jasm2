@@ -10,9 +10,7 @@ command -> Command<'input>
     = binary_ops
     / unary_ops
     / func
-    / call
     / ret
-    / label
     / jump
 
 binary_ops -> Command<'input>
