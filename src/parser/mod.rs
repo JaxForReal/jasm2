@@ -37,6 +37,8 @@ pub enum Command<'a> {
     // defines a label at this point in code
     Label(&'a str),
 
+    SysCall(&'a str),
+
     // JumpConditional(flag_address, label)
     JumpZero(Value, &'a str),
     JumpNotZero(Value, &'a str),

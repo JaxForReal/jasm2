@@ -42,18 +42,22 @@ unary_ops -> Command<'input>
 
 arrow = "->"
 
+string_commands -> Command<'input>
+    = __ command:identifier __ string:identifier __
+    {
+        match command {
+            "call" => Command::Call(string),
+            "label" => Command::Label(string),
+            "syscall" => Command::SysCall(string),
+            _ => panic!("Unidentified string command")
+        }
+    }
 //<func_name>;
 func -> Command<'input>
     = __ "<" name:identifier ">" __ { Command::Func(name) }
 
-call -> Command<'input>
-    = __ "call" __ name:identifier __ { Command::Call(name) }
-
 ret -> Command<'input>
     = __ "ret" __ { Command::Ret }
-
-label -> Command<'input>
-    = __ "label" __ label:identifier { Command::Label(label) }
 
 jump -> Command<'input>
     = __ command:identifier __ val:value __ label:identifier __
