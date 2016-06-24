@@ -17,19 +17,32 @@ impl Vm {
         Vm { ram: vec![0;32] }
     }
 
-    pub fn exec(prog: Vec<Command>) {
+    pub fn exec(&mut self, prog: Vec<Command>) {
 
     }
 
-    fn get_value(&self, value: &Value) -> u32 {
+    fn exec_command(&mut self, command: &Command) {
+
+    }
+
+    //returns u32 of a value field.
+    //needs to be &mut self because retrieving values can cause ram to grow
+    fn get_value(&mut self, value: &Value) -> u32 {
         match *value {
             Value::U32(n) => n,
-            Value::Address(address) => self.ram[get_value(&address)]
+            Value::Address(ref address) => {
+                let address_val = self.get_value(address);
+                self.get_ram(address_val as usize)
+            },
         }
     }
 
-    //retirives the <index> value of ram. If it is ouside the vector length, auto grows vector
-    ram_addr(&mut self, index: usize) -> u32 {
-
+    //retirives the <index> value of ram.
+    //If it is ouside the vector length, auto grows vector
+    fn get_ram(&mut self, index: usize) -> u32 {
+        while index > self.ram.len() {
+            self.ram.push(0);
+        }
+        self.ram[index]
     }
 }

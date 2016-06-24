@@ -53,3 +53,5 @@ to find if value is not equal
 <notequal_10and11>;
 compare @10 @11 -> 12
 and @12 b0010
+leftshift @12 1 -> 12
+jumpnotzero
