@@ -47,7 +47,7 @@ impl<'a> Vm<'a> {
 
     // returns u32 of a value field.
     // needs to be &mut self because retrieving values can cause ram to grow
-    pub fn get_value(&mut self, value: &Value) -> u32 {
+    fn get_value(&mut self, value: &Value) -> u32 {
         match *value {
             Value::U32(n) => n,
             Value::Address(ref address) => {
@@ -59,14 +59,14 @@ impl<'a> Vm<'a> {
 
     // retirives the <index> value of ram.
     // If it is ouside the vector length, auto grows vector
-    pub fn get_ram(&mut self, index: usize) -> u32 {
+    fn get_ram(&mut self, index: usize) -> u32 {
         while index > self.ram.len() {
             self.ram.push(0);
         }
         self.ram[index]
     }
 
-    pub fn set_ram(&mut self, index: usize, value: u32) {
+    fn set_ram(&mut self, index: usize, value: u32) {
         while index > self.ram.len() {
             self.ram.push(0);
         }
