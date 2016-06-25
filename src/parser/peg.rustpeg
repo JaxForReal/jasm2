@@ -12,6 +12,7 @@ command -> Command<'input>
     / func
     / ret
     / jump
+    / string_commands
 
 binary_ops -> Command<'input>
     = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
@@ -50,6 +51,7 @@ string_commands -> Command<'input>
             _ => panic!("Unidentified string command")
         }
     }
+    
 //<func_name>;
 func -> Command<'input>
     = __ "<" name:identifier ">" __ { Command::Func(name) }

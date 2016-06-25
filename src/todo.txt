@@ -5,3 +5,5 @@ nested functions?
 how to pass data to syscalls without hardcoded argument addresses
 
 how to retrieve addresses at non-32bit values
+
+consider using i32 instead of u32 for memory segments...?

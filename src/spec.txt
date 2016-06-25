@@ -55,3 +55,12 @@ compare @10 @11 -> 12
 and @12 b0010
 leftshift @12 1 -> 12
 jumpnotzero
+
+
+SPECIAL MEM ADDRESSES:
+0-9: function arguments, assumed to be destroyed on function call or syscall
+    also used by functions to return data
+
+
+SYSCALLS:
+print: prints the value in address 0
