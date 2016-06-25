@@ -13,6 +13,7 @@ command -> Command<'input>
     / ret
     / jump
     / string_commands
+    / data
 
 binary_ops -> Command<'input>
     = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
@@ -71,6 +72,10 @@ jump -> Command<'input>
         }
     }
 
+//data value value value value -> dest
+//any number of values
+data -> Command<'input>
+    = __ "data" __ values:(value ++ __) __ arrow __ dest:value { Command::Data(values, dest) }
 
 identifier -> &'input str
     = [a-z_]+ { match_str }

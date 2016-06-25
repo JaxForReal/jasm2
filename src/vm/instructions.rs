@@ -35,6 +35,14 @@ impl<'a> Vm<'a> {
             Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
             Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
 
+            Command::Data(ref values, ref d) => {
+                let dest = self.get_value(d) as usize;
+
+                for (index, value) in values.enumerate() {
+                    self.set_ram(dest + index, value);
+                }
+            },
+
             Command::Call(name) => {
                 // save our current place in program so we can return from call
                 self.call_stack.push(self.instruction_pointer);

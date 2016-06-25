@@ -1,7 +1,7 @@
 human-readable version:
 
-binary operators:
-add, sub, mul, div
+BINARY OPERATORS:
+add, sub, mul, div, and, or, xor, leftshift, rightshift, compare
 
 syntax:
 operator value value -> destination;
@@ -17,10 +17,10 @@ add @5 @6 -> 7;
 
 gets the values at 5 and 6, add them, and stores the reault in address 7
 
-unary operators:
+UNARY OPERATORS:
 operator value -> destination;
 
-functions:
+FUNCTIONS:
 
 <func_name>;
 commands;
@@ -64,3 +64,13 @@ SPECIAL MEM ADDRESSES:
 
 SYSCALLS:
 print: prints the value in address 0
+print_ascii: prints the value in address 0 as a utf-8 char
+
+
+DATA OPERATION:
+data value value value value -> destination;
+adds any number of values to memory in sequence, starting at destination
+
+example: 
+data 5 3 48 5 9 1 -> 0;
+will set @0 to 3, @2 to 3, @3 to 48, etc.

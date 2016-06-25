@@ -30,6 +30,9 @@ pub enum Command<'a> {
     Invert(Value, Value),
     ValueOf(Value, Value),
 
+    // Data(values, destination)
+    Data(Vec<Value>, Value),
+
     // execute function
     // Call(name)
     Call(&'a str),
