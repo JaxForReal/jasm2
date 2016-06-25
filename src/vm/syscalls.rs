@@ -3,7 +3,7 @@ use std::char;
 
 
 //implement all syscalls of the Vm
-impl Vm {
+impl<'a> Vm<'a> {
     pub fn syscall(&mut self, name: &str) {
         match name {
             "print" => self.print(),

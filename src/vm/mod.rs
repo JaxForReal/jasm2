@@ -1,5 +1,6 @@
 use super::parser::Command;
 use super::parser::Value;
+use std::collections::HashMap;
 
 mod syscalls;
 mod instructions;
@@ -9,20 +10,26 @@ mod instructions;
 //
 //
 //
-pub struct Vm {
+pub struct Vm<'a> {
     ram: Vec<u32>,
+
     // a stack for func calls. records where the instruction pointer was when a func was called,
     // and returns to that instruction when ret is encountered
     call_stack: Vec<usize>,
+    
     instruction_pointer: usize,
+
+    //translates function names to the instrunction pointer where that function begins
+    func_table: HashMap<&'a str, usize>,
 }
 
-impl Vm {
-    pub fn new() -> Vm {
+impl<'a> Vm<'a> {
+    pub fn new() -> Vm<'a> {
         Vm {
             ram: vec![0;32],
             call_stack: Vec::new(),
             instruction_pointer: 0,
+            func_table: HashMap::new(),
         }
     }
 

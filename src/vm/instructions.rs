@@ -4,7 +4,7 @@ use parser::Value;
 use parser::Command;
 
 // here the actually operations of the vm are implemented
-impl Vm {
+impl<'a> Vm<'a> {
     pub fn exec_single_command(&mut self, command: &Command) {
         match *command {
             Command::Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
