@@ -4,8 +4,16 @@
 pub mod parser;
 pub mod vm;
 
+static PROGRAM: &'static str = "
+
+
+
+ret;
+
+";
+
 fn main() {
-    let program = parser::try_parse("valueof 98 -> 0; syscall print_ascii;").unwrap();
-    let mut machine = vm::Vm::new();
-    machine.exec(&program);
+    let program = parser::try_parse(PROGRAM).unwrap();
+    let mut machine = vm::Vm::new(&program);
+    machine.exec();
 }

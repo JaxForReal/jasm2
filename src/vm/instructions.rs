@@ -1,7 +1,7 @@
 use super::Vm;
-use super::syscalls;
 use parser::Value;
 use parser::Command;
+use std::process;
 
 // here the actually operations of the vm are implemented
 impl<'a> Vm<'a> {
@@ -15,8 +15,28 @@ impl<'a> Vm<'a> {
             Command::LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
             Command::RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
 
-            Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
             Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
+            Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
+
+            Command::Call(name) => {
+                //save our current place in program so we can return from call
+                self.call_stack.push(self.instruction_pointer);
+                //jump to the function that we looked up in the table
+                self.instruction_pointer = self.label_table[name];
+            }
+
+            Command::Ret => {
+                let prev_position_maybe = self.call_stack.pop()
+
+                if let Some(prev_position) = prev_position_maybe {
+                    //there is a function to return to, so set IP to last call value
+                    instruction_pointer = prev_position;
+                } else {
+                    //this means we are returning from top level code, and we should stop execution
+                    process::exit(0);
+                }
+            }
+            
             Command::SysCall(name) => self.syscall(name),
             _ => {}
         }

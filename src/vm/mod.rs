@@ -11,31 +11,35 @@ mod instructions;
 //
 //
 pub struct Vm<'a> {
+    prog: &'a Vec<Command<'a>>,
     ram: Vec<u32>,
 
     // a stack for func calls. records where the instruction pointer was when a func was called,
     // and returns to that instruction when ret is encountered
     call_stack: Vec<usize>,
-    
+
     instruction_pointer: usize,
 
-    //translates function names to the instrunction pointer where that function begins
-    func_table: HashMap<&'a str, usize>,
+    //translates label names to the instruction pointer where that function begins
+    label_table: HashMap<&'a str, usize>,
 }
 
 impl<'a> Vm<'a> {
-    pub fn new() -> Vm<'a> {
+    pub fn new<'b>(new_prog: &'b Vec<Command>) -> Vm<'b> {
         Vm {
+            prog: new_prog,
             ram: vec![0;32],
             call_stack: Vec::new(),
             instruction_pointer: 0,
-            func_table: HashMap::new(),
+            label_table: HashMap::new(),
         }
     }
 
-    pub fn exec(&mut self, prog: &Vec<Command>) {
-        while self.instruction_pointer < prog.len() {
-            let next_command = &prog[self.instruction_pointer];
+    pub fn exec(&mut self) {
+        self.build_label_table();
+
+        while self.instruction_pointer < self.prog.len() {
+            let next_command = &self.prog[self.instruction_pointer];
             self.exec_single_command(next_command);
             self.instruction_pointer += 1;
         }
@@ -67,5 +71,17 @@ impl<'a> Vm<'a> {
             self.ram.push(0);
         }
         self.ram[index] = value;
+    }
+
+
+    fn build_label_table(&mut self) {
+        //for some reason we cannot use enumerate() here, so we must use a manual increment iterator
+        let mut iter = 0;
+        for command in self.prog {
+            if let Command::Label(name) = *command {
+                self.label_table.insert(name, iter);
+            }
+            iter += 1;
+        }
     }
 }

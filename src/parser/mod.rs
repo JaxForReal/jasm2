@@ -27,9 +27,6 @@ pub enum Command<'a> {
     Invert(Value, Value),
     ValueOf(Value, Value),
 
-    // declare start of function
-    // Func(name)
-    Func(&'a str),
     // execute function
     // Call(name)
     Call(&'a str),

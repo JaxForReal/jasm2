@@ -9,7 +9,7 @@ program -> Vec<Command<'input>>
 command -> Command<'input>
     = binary_ops
     / unary_ops
-    / func
+    / label
     / ret
     / jump
     / string_commands
@@ -46,15 +46,14 @@ string_commands -> Command<'input>
     {
         match command {
             "call" => Command::Call(string),
-            "label" => Command::Label(string),
             "syscall" => Command::SysCall(string),
             _ => panic!("Unidentified string command")
         }
     }
     
-//<func_name>;
-func -> Command<'input>
-    = __ "<" name:identifier ">" __ { Command::Func(name) }
+//<label_name>;
+label -> Command<'input>
+    = __ "<" name:identifier ">" __ { Command::Label(name) }
 
 ret -> Command<'input>
     = __ "ret" __ { Command::Ret }
