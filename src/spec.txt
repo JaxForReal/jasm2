@@ -4,7 +4,7 @@ BINARY OPERATORS:
 add, sub, mul, div, and, or, xor, leftshift, rightshift, compare
 
 syntax:
-operator value value -> destination;
+operator value value -> destination
 
 value is one of the following:
 address: @3, the value at address 3
@@ -13,29 +13,34 @@ binary value: b10010110101, the value represented by binary
 
 
 example:
-add @5 @6 -> 7;
+add @5 @6 -> 7
 
 gets the values at 5 and 6, add them, and stores the reault in address 7
 
 UNARY OPERATORS:
-operator value -> destination;
+syntax:
+operator value -> destination
 
 FUNCTIONS:
 
-<func_name>;
-commands;
-more commands;
-ret;
+syntax:
+<func_name>
+//commands
+//more commands
+ret
 
-calling a function:
-call func_name;
+calling a function syntax:
+call func_name
 
 
 COMPARE COMMAND:
 compares two values and returns a flag list.
-compare value value -> destination;
 
-ex. compare @5 b0110 -> 6;
+syntax:
+compare value value -> destination
+
+example:
+compare @5 56 -> 6
 
 compare FLAGS:
 binary value: 
@@ -47,14 +52,6 @@ binary value:
 4 less than or equal
 5 greater than or equal
 <most significant>
-
-to find if value is not equal
-
-<notequal_10and11>;
-compare @10 @11 -> 12
-and @12 b0010
-leftshift @12 1 -> 12
-jumpnotzero
 
 
 SPECIAL MEM ADDRESSES:
@@ -68,9 +65,12 @@ print_ascii: prints the value in address 0 as a utf-8 char
 
 
 DATA OPERATION:
-data value value value value -> destination;
+syntax:
+data value value value value -> destination
+
 adds any number of values to memory in sequence, starting at destination
 
 example: 
-data 5 3 48 5 9 1 -> 0;
+data 5 3 48 5 9 1 -> 0
+
 will set @0 to 3, @2 to 3, @3 to 48, etc.
