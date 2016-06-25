@@ -12,6 +12,7 @@ use std::fs::File;
 use std::io::Read;
 
 fn main() {
+    //skip the 0th arg, because it is inherently the path of the binary (useless here)
     let filename = env::args().nth(1).expect("No input file");
     let mut file = File::open(filename).expect("could not open file");
 

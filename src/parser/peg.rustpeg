@@ -3,7 +3,9 @@ use super::Command;
 
 #[export]
 program -> Vec<Command<'input>>
-    = __ prog:(command ++ ";") ";" __ { prog }
+    = __ prog:(command ++ line_sep) line_sep __ { prog }
+
+line_sep = __
 
 #[export]
 command -> Command<'input>
