@@ -4,7 +4,7 @@ use std::char;
 pub fn syscall(machine: &mut Vm, name: &str) {
     match name {
         "print" => print(machine),
-        "print_ascii" => print(machine),
+        "print_ascii" => print_ascii(machine),
         _ => panic!("unknown syscall"),
     }
 }
