@@ -5,8 +5,10 @@ pub mod parser;
 pub mod vm;
 
 static PROGRAM: &'static str = "
-<start>;
-data 0 23 453 3 4543 55 -> 0;
+12 -> 1;
+data 5 8 99 456 2 -> 10;
+@@1 -> 0;
+syscall print;
 ";
 
 fn main() {

@@ -14,6 +14,7 @@ command -> Command<'input>
     / jump
     / string_commands
     / data
+    / valueof
 
 binary_ops -> Command<'input>
     = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
@@ -33,12 +34,12 @@ binary_ops -> Command<'input>
         }
     }
 
+//use match here so it is easy to add unary ops
 unary_ops -> Command<'input>
     = __ command:identifier __ arg:value __ arrow __ dest:value
     {
         match command {
             "invert" => Command::Invert(arg, dest),
-            "valueof" => Command::ValueOf(arg, dest),
             _ => panic!("unidentified command")
         }
     }
@@ -71,6 +72,9 @@ jump -> Command<'input>
             _ => panic!("unrecognised jump command")
         }
     }
+
+valueof -> Command<'input>
+    = __ val:value __ arrow __ dest:value __ { Command::ValueOf(val, dest) }
 
 //data value value value value -> dest
 //any number of values

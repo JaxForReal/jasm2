@@ -8,3 +8,28 @@ or smaller segmentation?
 TESTING!
 
 fix enumerates not working...
+
+<start>;
+data 96 98 97 100 99 -> 10;
+valueof 10 -> 0;
+valueof 4 -> 1;
+call print_all_ascii;
+ret;
+
+
+//@0 = poniter to data
+//@1 = # of cells to print
+
+<print_all_ascii>;
+//copy to 5 and 6 so we can use syscall without destroying
+valueof @0 -> 5;
+valueof @1 -> 6;
+
+valueof @@5 -> 0;
+syscall print_ascii;
+//incement pointer
+add @5 1 -> 5;
+//subtract from counter
+sub @6 1 -> 6;
+jumpnotzero print_all_ascii;
+ret;
