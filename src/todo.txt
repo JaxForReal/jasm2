@@ -9,6 +9,8 @@ TESTING!
 
 fix enumerates not working...
 
+remove need for semicolons at end of line
+
 <start>;
 data 96 98 97 100 99 -> 10;
 valueof 10 -> 0;
