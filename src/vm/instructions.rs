@@ -3,6 +3,7 @@ use super::syscalls;
 use parser::Value;
 use parser::Command;
 
+// here the actually operations of the vm are implemented
 impl Vm {
     pub fn exec_single_command(&mut self, command: &Command) {
         match *command {
@@ -16,13 +17,14 @@ impl Vm {
 
             Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
             Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
-            Command::SysCall(name) => syscalls::syscall(self, name),
+            Command::SysCall(name) => self.syscall(name),
             _ => {}
         }
     }
 
 
     // performs a binary operation based on a simple fn(u32, u32) -> u32 closure
+    // given left, right, and dest vals from parser
     // TODO is it better to use dynamic or static dispatch here for closure?
     // currently using static
     fn auto_binary_op<TFunc>(&mut self,
@@ -41,7 +43,7 @@ impl Vm {
         self.set_ram(dest_val, result);
     }
 
-
+    // takes a closure and arg/dest values and performs that closure on those values
     fn auto_unary_op<TFunc>(&mut self, arg: &Value, dest: &Value, operation: TFunc)
         where TFunc: Fn(u32) -> u32
     {
