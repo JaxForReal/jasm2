@@ -39,6 +39,13 @@ impl<'a> Vm<'a> {
 
             Command::JumpZero(ref a, name) => {
                 if self.get_value(a) == 0 {
+                    //jump to label defined by name
+                    self.instruction_pointer = self.label_table[name]
+                }
+            }
+            Command::JumpNotZero(ref a, name) => {
+                if self.get_value(a) != 0 {
+                    //jump to label defined by name
                     self.instruction_pointer = self.label_table[name]
                 }
             }
