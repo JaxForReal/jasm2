@@ -1,6 +1,9 @@
 #![feature(plugin)]
 #![plugin(peg_syntax_ext)]
 
+#[cfg(test)]
+mod tests;
+
 pub mod parser;
 pub mod vm;
 
