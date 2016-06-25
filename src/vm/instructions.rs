@@ -7,13 +7,30 @@ use std::process;
 impl<'a> Vm<'a> {
     pub fn exec_single_command(&mut self, command: &Command) {
         match *command {
+            //TODO macro for this pattern?
             Command::Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
             Command::Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a - b),
             Command::Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
             Command::Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a / b),
-
+            
             Command::LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
             Command::RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
+
+            Command::And(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a & b),
+            Command::Or(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a | b),
+            Command::Xor(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a ^ b),
+
+            Command::Compare(ref l, ref r, ref d) => self.auto_binary_op(l, r, d,
+            |a, b| {
+                let mut ret = 0;
+                if a != b {ret |= 1 << 1};
+                if a == b {ret |= 1 << 0};
+                if a < b {ret |= 1 << 2};
+                if a > b {ret |= 1 << 3};
+                if a <= b {ret |= 1 << 4};
+                if a >= b {ret |= 1 << 5};
+                ret
+            }),
 
             Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
             Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),

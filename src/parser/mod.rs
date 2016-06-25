@@ -20,6 +20,9 @@ pub enum Command<'a> {
     // shift(value_to_shift, amount, destination)
     LeftShift(Value, Value, Value),
     RightShift(Value, Value, Value),
+    And(Value, Value, Value),
+    Or(Value, Value, Value),
+    Xor(Value, Value, Value),
 
     Compare(Value, Value, Value),
 

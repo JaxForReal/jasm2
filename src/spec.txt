@@ -42,8 +42,8 @@ binary value:
 <least significant>
 0 equal
 1 not equal
-2 greater than
-3 less than 
+2 less than
+3 greater than 
 4 less than or equal
 5 greater than or equal
 <most significant>

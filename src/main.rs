@@ -8,10 +8,28 @@ static PROGRAM: &'static str = "
 <start>;
 valueof 97 -> 0;
 syscall print_ascii;
-jumpzero 0 start;
+valueof 98 -> 0;
+syscall print_ascii;
 
+call other;
+
+valueof 102 -> 0;
+syscall print_ascii;
 ret;
 
+<other>;
+valueof 99 -> 0;
+syscall print_ascii;
+valueof 100 -> 0;
+syscall print_ascii;
+
+call poo;
+ret;
+
+<poo>;
+valueof 101 -> 0;
+syscall print_ascii;
+ret;
 ";
 
 fn main() {
