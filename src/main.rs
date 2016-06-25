@@ -5,7 +5,7 @@ pub mod parser;
 pub mod vm;
 
 fn main() {
-    let program = parser::try_parse("add 0 27 -> 0; syscall print;").unwrap();
+    let program = parser::try_parse("valueof 98 -> 0; syscall print_ascii;").unwrap();
     let mut machine = vm::Vm::new();
     machine.exec(&program);
 }
