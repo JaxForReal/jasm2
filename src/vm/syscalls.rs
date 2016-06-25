@@ -2,7 +2,7 @@ use super::Vm;
 use std::char;
 
 
-//implement all syscalls of the Vm
+// implement all syscalls of the Vm
 impl<'a> Vm<'a> {
     pub fn syscall(&mut self, name: &str) {
         match name {

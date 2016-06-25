@@ -19,24 +19,30 @@ impl<'a> Vm<'a> {
             Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
 
             Command::Call(name) => {
-                //save our current place in program so we can return from call
+                // save our current place in program so we can return from call
                 self.call_stack.push(self.instruction_pointer);
-                //jump to the function that we looked up in the table
+                // jump to the function that we looked up in the table
                 self.instruction_pointer = self.label_table[name];
             }
 
             Command::Ret => {
-                let prev_position_maybe = self.call_stack.pop()
+                let prev_position_maybe = self.call_stack.pop();
 
                 if let Some(prev_position) = prev_position_maybe {
-                    //there is a function to return to, so set IP to last call value
-                    instruction_pointer = prev_position;
+                    // there is a function to return to, so set IP to last call value
+                    self.instruction_pointer = prev_position;
                 } else {
-                    //this means we are returning from top level code, and we should stop execution
+                    // this means we are returning from top level code, and we should stop execution
                     process::exit(0);
                 }
             }
-            
+
+            Command::JumpZero(ref a, name) => {
+                if self.get_value(a) == 0 {
+                    self.instruction_pointer = self.label_table[name]
+                }
+            }
+
             Command::SysCall(name) => self.syscall(name),
             _ => {}
         }

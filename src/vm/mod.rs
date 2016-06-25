@@ -20,7 +20,7 @@ pub struct Vm<'a> {
 
     instruction_pointer: usize,
 
-    //translates label names to the instruction pointer where that function begins
+    // translates label names to the instruction pointer where that function begins
     label_table: HashMap<&'a str, usize>,
 }
 
@@ -75,7 +75,7 @@ impl<'a> Vm<'a> {
 
 
     fn build_label_table(&mut self) {
-        //for some reason we cannot use enumerate() here, so we must use a manual increment iterator
+        // for some reason we cannot use enumerate() here, so we must use a manual increment iterator
         let mut iter = 0;
         for command in self.prog {
             if let Command::Label(name) = *command {
