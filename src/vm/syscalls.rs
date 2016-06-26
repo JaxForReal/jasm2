@@ -15,12 +15,12 @@ impl<'a> Vm<'a> {
 
     // print the value in address 0 as a decimal
     fn print(&mut self) {
-        println!("{}", self.get_ram(0));
+        print!("{}", self.get_ram(0));
     }
 
     // print the value in address 0 as an ascii char
     fn print_ascii(&mut self) {
-        println!("{}",
+        print!("{}",
                  char::from_u32(self.get_ram(0)).expect("char is not a valid character"));
     }
 }
