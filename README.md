@@ -1,6 +1,20 @@
 # Jasm2
-
 Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
+
+## ToDo
+
+- [x] Branching Syntax
+- [x] How to handle nested functions and declarations?
+- [x] How to pass data to syscalls without hardcoded argument addresses?
+- [ ] Retrieve data at non-32bit addresses (between cells)
+- [ ] Consider using i32 instead of u32 for memory cells
+- [ ] Write tests
+- [ ] Fix enumarate() not working when building function_table and data operations
+- [x] Remove need for semicolons at end of lines
+- [ ] ASCII value types
+- [ ] New parser for a machine syntax that is easy to compile to (but less readable)
+
+# Language
 ## Values
 A value can be either an address or a number.  
 ### Addresses
@@ -114,14 +128,3 @@ Adds any number of values to memory in sequence, starting at destination.
 data 5 3 48 5 9 1 -> 0
 ```
 will set @0 to 3, @2 to 3, @3 to 48, etc.
-
-## ToDo
-
-- [x] Branching Syntax
-- [x] How to handle nested functions and declarations?
-- [x] How to pass data to syscalls without hardcoded argument addresses?
-- [ ] Retrieve data at non-32bit addresses (between cells)
-- [ ] Consider using i32 instead of u32 for memory cells
-- [ ] Write tests
-- [ ] Fix enumarate() not working when building function_table and data operations
-- [x] Remove need for semicolons at end of lines
