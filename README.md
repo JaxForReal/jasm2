@@ -28,7 +28,7 @@ currently implemented operators:
 
 ### Syntax
 ```
-operator value value -> value`
+operator value value -> value
 ```
 NOTE: the destination (after the arrow) is a memory address. So to store a result to memory cell #3, you would write `add 4 5 -> 3`
 
