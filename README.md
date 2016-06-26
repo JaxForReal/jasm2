@@ -42,6 +42,7 @@ Gets the values at memory cell #5 and 6, add them, and stores the result in addr
 ## Unary Operators
 currently only one unary operator:
 * invert
+
 ### Syntax:
 ```
 operator value -> value
