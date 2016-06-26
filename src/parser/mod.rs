@@ -1,6 +1,7 @@
 peg_file! peg("peg.rustpeg");
 
 pub fn try_parse<'a>(program: &'a str) -> Result<Vec<Command<'a>>, peg::ParseError> {
+    println!("{:?}", peg::data("data `test` -> 0"));
     peg::program(program)
 }
 

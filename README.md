@@ -11,7 +11,7 @@ Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
 - [ ] Write tests
 - [ ] Fix enumarate() not working when building function_table and data operations
 - [x] Remove need for semicolons at end of lines
-- [ ] ASCII value types
+- [x] ASCII value types
 - [ ] New parser for a machine syntax that is easy to compile to (but less readable)
 - [ ] imports or links to other jasm files
 - [ ] syscall for reading arguments
@@ -27,9 +27,10 @@ A value can be either an address or a number.
   
 Unlimited levels of pointer indirection are supported. Ex `@@@@@23` is a valid value.
 ### Numbers
-`259` the decimal value 258  
-`b00101` the binary value (decimal 5)  
-any number of 1s and 0s are supported: `b1` is valid, as is `b100101101110`
+`259` the decimal value 259.  
+`b00101` the binary value (decimal 5)  .
+any number of 1s and 0s are supported: `b1` is valid, as is `b100101101110`.
+`'a` the utf-8 value of character 'a' (decimal 97).
 
 ## Binary Operators
 currently implemented operators:
@@ -86,7 +87,7 @@ Compares two values and returns a flags.
 
 ### Syntax
 ```
-compare value value -> destination
+compare value value -> value
 ```
 ### Example
 ```
@@ -123,12 +124,23 @@ prints the value in address 0 as a utf-8 char
 ## Data in code
 ### Syntax
 ```
-data value value value value -> destination
+data value value value value -> value
 ```
-Adds any number of values to memory in sequence, starting at destination.
+Adds any number of values to memory in sequence, starting at destination.  
+  
+Or
+```
+data `string` -> value
+```
+Adds each character of the string in a new memory cell, starting at destination. characters are utf-8 encoded, as per rust standrd.
 
 ### Example
 ```
 data 5 3 48 5 9 1 -> 0
 ```
-will set @0 to 3, @2 to 3, @3 to 48, etc.
+will set @0 to 3, @1 to 3, @2 to 48, etc.  
+  
+```
+data `qwerty` -> 10
+```
+will set @0 113, @1 to 119, etc...

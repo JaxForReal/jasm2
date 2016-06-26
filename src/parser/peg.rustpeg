@@ -78,10 +78,14 @@ jump -> Command<'input>
 valueof -> Command<'input>
     = __ val:value __ arrow __ dest:value __ { Command::ValueOf(val, dest) }
 
-//data value value value value -> dest
-//any number of values
+#[export]
 data -> Command<'input>
-    = __ "data" __ values:(value ++ __) __ arrow __ dest:value { Command::Data(values, dest) }
+    = __ "data" __ values:(value ++ __) __ arrow __ dest:value __ { Command::Data(values, dest) }
+    //a string, where each character is added in a new memory cell, surround with quotes, not zero terminated
+    / __ "data" __ "`" characters:(data_string_char+) "`" __ arrow __ dest:value __ { Command::Data(characters, dest) }
+
+data_string_char -> Value
+    = !"`" . { Value::U32(match_str.chars().nth(0).unwrap() as u32) }
 
 identifier -> &'input str
     = [a-z_]+ { match_str }
@@ -112,10 +116,15 @@ value -> Value
     / "@" v:value { Value::Address(Box::new(v)) }
 
 integer -> u32
-    = decimal_integer / binary_integer
+    = decimal_integer
+    / binary_integer
+    / ascii_integer
 
 decimal_integer -> u32
     = [0-9]+ { match_str.parse::<u32>().unwrap() }
 
 binary_integer -> u32
     = "b" [0-1]+ { u32::from_str_radix(&match_str[1..], 2).unwrap() }
+
+ascii_integer -> u32
+    = "'" . { match_str.chars().nth(1).unwrap() as u32}
