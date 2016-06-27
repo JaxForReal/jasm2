@@ -38,7 +38,7 @@ binary_ops -> Command<'input>
 
 //use match here so it is easy to add unary ops
 unary_ops -> Command<'input>
-    = __ command:identifier __ arg:value __ arrow __ dest:value
+    = __ command:identifier __ arg:value __ arrow __ dest:value __
     {
         match command {
             "invert" => Command::Invert(arg, dest),
@@ -54,7 +54,7 @@ string_commands -> Command<'input>
         match command {
             "call" => Command::Call(string),
             "syscall" => Command::SysCall(string),
-            _ => panic!("Unidentified string command")
+            _ => panic!("Unidentified string command: {:?}", command)
         }
     }
     
@@ -78,7 +78,6 @@ jump -> Command<'input>
 valueof -> Command<'input>
     = __ val:value __ arrow __ dest:value __ { Command::ValueOf(val, dest) }
 
-#[export]
 data -> Command<'input>
     = __ "data" __ values:(value ++ __) __ arrow __ dest:value __ { Command::Data(values, dest) }
     //a string, where each character is added in a new memory cell, surround with quotes, not zero terminated
@@ -95,16 +94,19 @@ identifier -> &'input str
 ////////////
 
 __ =
-    (whitespace / eol_char / comment)*
+    (comment / eol_char / whitespace / multi_line_comment)*
 
 comment
-  = "//" ( .)* eol_char
+  = "//" (!eol_char .)*
+
+multi_line_comment
+    = "/*" (!"*/" .)* "*/"
 
 whitespace
     = [ \t]+
 
 eol_char
-  = [\n\r\u2028\u2029]
+    = [\n\r\u2028\u2029]
 
 ///////////////
 //NUMBER VALUES

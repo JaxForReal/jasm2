@@ -1,16 +1,19 @@
+#[cfg(test)]
+mod test;
+
 peg_file! peg("peg.rustpeg");
 
 pub fn try_parse<'a>(program: &'a str) -> Result<Vec<Command<'a>>, peg::ParseError> {
     peg::program(program)
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Value {
     U32(u32),
     Address(Box<Value>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Command<'a> {
     // BinaryOp(arg1, arg2, destination)
     Add(Value, Value, Value),
