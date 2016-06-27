@@ -28,8 +28,7 @@ A value can be either an address or a number.
 Unlimited levels of pointer indirection are supported. Ex `@@@@@23` is a valid value.
 ### Numbers
 `259` the decimal value 259.  
-`b00101` the binary value (decimal 5)  .
-any number of 1s and 0s are supported: `b1` is valid, as is `b100101101110`.
+`b00101` the binary value (decimal 5). Any number of 1s and 0s are supported: `b1` is valid, as is `b100101101110`.  
 `'a` the utf-8 value of character 'a' (decimal 97).
 
 ## Binary Operators
@@ -132,7 +131,7 @@ Or
 ```
 data `string` -> value
 ```
-Adds each character of the string in a new memory cell, starting at destination. characters are utf-8 encoded, as per rust standrd.
+Adds each character of the string in a new memory cell, starting at destination. characters are utf-8 encoded, as per rust standard.
 
 ### Example
 ```
