@@ -14,7 +14,8 @@ Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
 - [ ] ASCII value types
 - [ ] New parser for a machine syntax that is easy to compile to (but less readable)
 - [ ] imports or links to other jasm files
-- [ ] syscall for reading arguments and ability to package as exe (with interpreter included?)
+- [ ] syscall for reading arguments
+- [ ] Ability to package as exe (with interpreter included?)
 - [ ]
 
 # Language
