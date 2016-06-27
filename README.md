@@ -16,7 +16,7 @@ Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
 - [ ] imports or links to other jasm files
 - [ ] syscall for reading arguments
 - [ ] Ability to package as exe (with interpreter included?)
-- [ ]
+- [ ] different arrow syntax
 
 # Language
 ## Values
