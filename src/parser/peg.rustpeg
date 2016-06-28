@@ -9,9 +9,9 @@ line_sep = __
 #[export]
 command -> Command<'input>
     = binary_ops
+    / ret
     / unary_ops
     / label
-    / ret
     / jump
     / string_commands
     / data

@@ -1,12 +1,12 @@
 use super::Vm;
 use parser::Value;
 use parser::Command;
-use std::process;
 use std::io::Write;
 
 // here the actually operations of the vm are implemented
 impl<'a, TOut: Write> Vm<'a, TOut> {
-    pub fn exec_single_command(&mut self, command: &Command) {
+    //return whether or not execution should ocntinue after this command;
+    pub fn exec_single_command(&mut self, command: &Command) -> bool{
         match *command {
             // TODO macro for this pattern?
             Command::Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
@@ -76,7 +76,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                     self.instruction_pointer = prev_position;
                 } else {
                     // this means we are returning from top level code, and we should stop execution
-                    process::exit(0);
+                    return false;
                 }
             }
 
@@ -97,6 +97,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             // ignore labels
             Command::Label(_) => {}
         }
+        true
     }
 
 

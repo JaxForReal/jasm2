@@ -44,7 +44,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
         while self.instruction_pointer < self.prog.len() {
             let next_command = &self.prog[self.instruction_pointer];
-            self.exec_single_command(next_command);
+            if !self.exec_single_command(next_command) {
+                return;
+            }
             self.instruction_pointer += 1;
         }
     }

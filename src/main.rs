@@ -10,7 +10,6 @@ pub mod vm;
 use std::env;
 use std::fs::File;
 use std::io::{self, Read};
-use std::io::Write;
 
 fn main() {
     // skip the 0th arg, because it is inherently the path of the binary (useless here)
@@ -22,6 +21,7 @@ fn main() {
 
     let parsed_program = parser::try_parse(&program).expect("could not parse program");
 
+    println!("{:?}", parsed_program);
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
 }

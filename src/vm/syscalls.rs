@@ -15,6 +15,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // print the value in address 0 as a decimal
     fn print(&mut self) {
+        println!("print called");
         // convert u32 to string, to get the digits as individual chars
         // then convert the digit characters to a byte array to pass to output
         let value = self.get_ram(0).to_string();
