@@ -24,23 +24,23 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             Command::Compare(ref l, ref r, ref d) => {
                 self.auto_binary_op(l, r, d, |a, b| {
                     let mut ret = 0;
-                    if a != b {
-                        ret |= 1 << 1
-                    };
                     if a == b {
-                        ret |= 1 << 0
+                        ret |= 0b1;
+                    };
+                    if a != b {
+                        ret |= 0b10;
                     };
                     if a < b {
-                        ret |= 1 << 2
+                        ret |= 0b100;
                     };
                     if a > b {
-                        ret |= 1 << 3
+                        ret |= 0b1000;
                     };
                     if a <= b {
-                        ret |= 1 << 4
+                        ret |= 0b10000;
                     };
                     if a >= b {
-                        ret |= 1 << 5
+                        ret |= 0b100000;
                     };
                     ret
                 })

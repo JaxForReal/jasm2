@@ -4,4 +4,4 @@ version = "0.1.0"
 authors = ["JaxForReal <jackpribis@gmail.com>"]
 
 [dependencies]
-peg = "0.3.0"
+peg = "0.3.13"

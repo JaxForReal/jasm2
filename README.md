@@ -1,5 +1,5 @@
 # Jasm2
-Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
+Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 
 ## ToDo
 
