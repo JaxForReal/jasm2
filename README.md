@@ -22,7 +22,7 @@ Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
 - [ ] New name to not conflict with JVM Bytecode Assembler
 - [ ] ability to define constants, and other preprocessor directives
 - [ ] A stdlib written in jasm, for pushing and popping on the stack, and string printing options
-- [ ] Ability to give a printStream to vm, so it can output to tests or stdout
+- [x] Ability to give a printStream to vm, so it can output to tests or stdout
 - [ ] Graceful panics when parsing fails
 
 # Language

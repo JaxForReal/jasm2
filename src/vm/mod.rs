@@ -1,6 +1,6 @@
-use super::parser::Command;
-use super::parser::Value;
+use super::parser::{Command, Value};
 use std::collections::HashMap;
+use std::io::Write;
 
 mod syscalls;
 mod instructions;
@@ -10,8 +10,9 @@ mod instructions;
 //
 //
 //
-pub struct Vm<'a> {
+pub struct Vm<'a, TOut: Write> {
     prog: &'a Vec<Command<'a>>,
+    output: TOut,
     ram: Vec<u32>,
 
     // a stack for func calls. records where the instruction pointer was when a func was called,
@@ -24,10 +25,11 @@ pub struct Vm<'a> {
     label_table: HashMap<&'a str, usize>,
 }
 
-impl<'a> Vm<'a> {
-    pub fn new<'b>(new_prog: &'b Vec<Command>) -> Vm<'b> {
+impl<'a, TOut: Write> Vm<'a, TOut> {
+    pub fn new<'b>(new_prog: &'b Vec<Command>, out: TOut) -> Vm<'b, TOut> {
         Vm {
             prog: new_prog,
+            output: out,
             ram: vec![0;32],
             call_stack: Vec::new(),
             instruction_pointer: 0,

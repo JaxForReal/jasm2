@@ -2,9 +2,10 @@ use super::Vm;
 use parser::Value;
 use parser::Command;
 use std::process;
+use std::io::Write;
 
 // here the actually operations of the vm are implemented
-impl<'a> Vm<'a> {
+impl<'a, TOut: Write> Vm<'a, TOut> {
     pub fn exec_single_command(&mut self, command: &Command) {
         match *command {
             // TODO macro for this pattern?
@@ -93,7 +94,8 @@ impl<'a> Vm<'a> {
             }
 
             Command::SysCall(name) => self.syscall(name),
-            _ => {}
+            //ignore labels
+            Command::Label(_) => {},
         }
     }
 
