@@ -9,14 +9,19 @@ Compiled with `rustc 1.11.0-nightly (51d2d3da8 2016-06-12)`
 - [ ] Retrieve data at non-32bit addresses (between cells)
 - [ ] Consider using i32 instead of u32 for memory cells
 - [ ] Write tests
-- [ ] Fix enumarate() not working when building function_table and data operations
+- [ ] Fix enumerate() not working when building function_table and data operations
 - [x] Remove need for semicolons at end of lines
 - [x] ASCII value types
 - [ ] New parser for a machine syntax that is easy to compile to (but less readable)
 - [ ] imports or links to other jasm files
 - [ ] syscall for reading arguments
+- [ ] gui syscalls
 - [ ] Ability to package as exe (with interpreter included?)
 - [ ] different arrow syntax
+- [ ] New name to not conflict with JVM Bytecode Assembler
+- [ ] ability to define constants, and other preprocessor directives
+- [ ] A stdlib written in jasm, for pushing and popping on the stack, and string printing options
+- [ ] 
 
 # Language
 ## Values
@@ -55,7 +60,7 @@ NOTE: the destination (after the arrow) is a memory address. So to store a resul
 ```
 add @5 @6 -> 7
 ```
-Gets the values at memory cell #5 and 6, add them, and stores the result in address 7
+Gets the values at memory cell #5 and #6, add them, and stores the result in address 7
 
 ## Unary Operators
 currently only one unary operator:
@@ -81,6 +86,14 @@ Calling a function syntax
 call func_name
 ```
 
+##Labels
+### Syntax
+```
+<_label_name>
+//commands
+```
+Labels are defined in the same way as functions, but you should prepend label names with an underscore to differentiate them from functions. Jumping to labels is done with the `jumpzero value label` and`jumpnotzero value label` commands. There is no unconditional jumping, instead use `jumpzero 0 label`.
+
 ## Compare Operator
 Compares two values and returns a flags.
 
@@ -92,7 +105,31 @@ compare value value -> value
 ```
 compare @5 56 -> 6
 ```
-#### compare flags
+
+Compare can also be used in conjuntion with `jumpnotzero` to jump based on the relation between two values.
+```
+<start>
+//start with these values
+25 -> 0
+27 -> 1
+
+//compare and store the flags to cell #3
+compare @0 @1 -> 3
+//use a bit AND mask to isolate the "less than" flag
+and @3 b00000100 -> 3
+jumpnotzero @3 _comparison_was_true
+<_comparison_was_false>
+//do stuff
+
+<_resume_exec>
+ret
+
+<_comparison_was_true>
+//do stuff
+jumpzero 0 _resume_exec
+```
+
+### compare flags
 Least significant end of value
 * 0: equal
 * 1: not equal
