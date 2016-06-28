@@ -94,8 +94,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             }
 
             Command::SysCall(name) => self.syscall(name),
-            //ignore labels
-            Command::Label(_) => {},
+            // ignore labels
+            Command::Label(_) => {}
         }
     }
 

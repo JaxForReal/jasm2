@@ -4,6 +4,8 @@ use std::io::Write;
 
 mod syscalls;
 mod instructions;
+#[cfg(test)]
+mod test;
 
 // ram value
 // 0: instruction pointer
@@ -62,14 +64,14 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // retirives the <index> value of ram.
     // If it is ouside the vector length, auto grows vector
     fn get_ram(&mut self, index: usize) -> u32 {
-        while index > self.ram.len() {
+        while index >= self.ram.len() {
             self.ram.push(0);
         }
         self.ram[index]
     }
 
     fn set_ram(&mut self, index: usize, value: u32) {
-        while index > self.ram.len() {
+        while index >= self.ram.len() {
             self.ram.push(0);
         }
         self.ram[index] = value;

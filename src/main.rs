@@ -2,7 +2,7 @@
 #![plugin(peg_syntax_ext)]
 
 #[cfg(test)]
-mod tests;
+mod test;
 
 pub mod parser;
 pub mod vm;
@@ -10,6 +10,7 @@ pub mod vm;
 use std::env;
 use std::fs::File;
 use std::io::{self, Read};
+use std::io::Write;
 
 fn main() {
     // skip the 0th arg, because it is inherently the path of the binary (useless here)
