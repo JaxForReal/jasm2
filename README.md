@@ -160,7 +160,7 @@ prints the value in address 0 as a utf-8 char
 #### read
 reads stdin as a u32, and saves to address 0
 #### read_string
-read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to `data \`string\` -> poniter`, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
+read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to ```data `string` -> poniter```, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
 #### read_char
 reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0.
 
