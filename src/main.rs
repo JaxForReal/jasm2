@@ -21,7 +21,7 @@ fn main() {
 
     let parsed_program = parser::try_parse(&program).expect("could not parse program");
 
-    //println!("{:?}", parsed_program);
+    // println!("{:?}", parsed_program);
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
 }

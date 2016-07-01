@@ -7,13 +7,10 @@ mod instructions;
 #[cfg(test)]
 mod test;
 
-// ram value
-// 0: instruction pointer
-//
-//
-//
 pub struct Vm<'a, TOut: Write> {
+    // vector of commands, executed sequentially
     prog: &'a Vec<Command<'a>>,
+    // all print syscalls, etc output is written to this object
     output: TOut,
     ram: Vec<u32>,
 
@@ -21,6 +18,7 @@ pub struct Vm<'a, TOut: Write> {
     // and returns to that instruction when ret is encountered
     call_stack: Vec<usize>,
 
+    // The index into prog vector where the currently executing command is
     instruction_pointer: usize,
 
     // translates label names to the instruction pointer where that function begins
@@ -39,6 +37,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         }
     }
 
+    // executes the program, writing all output to the `out` object
     pub fn exec(&mut self) {
         self.build_label_table();
 
@@ -78,7 +77,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         }
         self.ram[index] = value;
     }
-
 
     fn build_label_table(&mut self) {
         // for some reason we cannot use enumerate() here, so we must use a manual increment iterator

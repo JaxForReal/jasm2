@@ -18,7 +18,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // print the value in address 0 as a decimal
     fn print(&mut self) {
-        //println!("print called");
+        // println!("print called");
         // convert u32 to string, to get the digits as individual chars
         // then convert the digit characters to a byte array to pass to output
         let value = self.get_ram(0).to_string();
@@ -33,7 +33,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
 
     // read a single value into address 0
-    //returns 0 if the value coild not e parsed.
+    // returns 0 if the value coild not e parsed.
     fn read(&mut self) {
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("couldnt read from stdin");
@@ -41,7 +41,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.set_ram(0, value);
     }
 
-    //read a string of utf8 chars starting at the pointer in call #0
+    // read a string of utf8 chars starting at the pointer in call #0
     fn read_string(&mut self) {
         let save_pointer = self.get_ram(0);
 
@@ -52,7 +52,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         }
     }
 
-    //reads a single utf-8 char to memory cell 0
+    // reads a single utf-8 char to memory cell 0
     fn read_char(&mut self) {
         let mut input = String::new();
         io::stdin().read_line(&mut input).expect("couldnt read from stdin");
