@@ -12,7 +12,7 @@ const RAM_SIZE: usize = 1024;
 
 pub struct Vm<'a, TOut: Write> {
     // vector of commands, executed sequentially
-    prog: &'a Vec<Command<'a>>,
+    prog: &'a [Command<'a>],
     // all print syscalls, etc output is written to this object
     output: TOut,
     ram: Vec<u32>,
@@ -29,7 +29,7 @@ pub struct Vm<'a, TOut: Write> {
 }
 
 impl<'a, TOut: Write> Vm<'a, TOut> {
-    pub fn new<'b>(new_prog: &'b Vec<Command>, out: TOut) -> Vm<'b, TOut> {
+    pub fn new(new_prog: &'a [Command], out: TOut) -> Vm<'a, TOut> {
         Vm {
             prog: new_prog,
             output: out,
