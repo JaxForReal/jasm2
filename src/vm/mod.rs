@@ -7,6 +7,9 @@ mod instructions;
 #[cfg(test)]
 mod test;
 
+// ram size in cells
+const RAM_SIZE: usize = 1024;
+
 pub struct Vm<'a, TOut: Write> {
     // vector of commands, executed sequentially
     prog: &'a Vec<Command<'a>>,
@@ -30,7 +33,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         Vm {
             prog: new_prog,
             output: out,
-            ram: vec![0;32],
+            ram: vec![0; RAM_SIZE],
             call_stack: Vec::new(),
             instruction_pointer: 0,
             label_table: HashMap::new(),
@@ -64,17 +67,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // retirives the <index> value of ram.
     // If it is ouside the vector length, auto grows vector
-    fn get_ram(&mut self, index: usize) -> u32 {
-        while index >= self.ram.len() {
-            self.ram.push(0);
-        }
+    fn get_ram(&self, index: usize) -> u32 {
         self.ram[index]
     }
 
     fn set_ram(&mut self, index: usize, value: u32) {
-        while index >= self.ram.len() {
-            self.ram.push(0);
-        }
         self.ram[index] = value;
     }
 
