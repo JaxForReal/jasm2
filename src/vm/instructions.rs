@@ -50,15 +50,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
             Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
 
-            // TODO enumerate() doesnt work for some reason here, need fix
             Command::Data(ref values, ref d) => {
                 let dest = self.get_value(d) as usize;
 
-                let mut index = 0;
-                for value in values {
+                for (index, value) in values.iter().enumerate() {
                     let value_as_number = self.get_value(value);
                     self.set_ram(dest + index, value_as_number);
-                    index += 1;
                 }
             }
 

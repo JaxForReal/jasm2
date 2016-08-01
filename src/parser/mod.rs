@@ -3,7 +3,7 @@ mod test;
 
 peg_file! peg("peg.rustpeg");
 
-pub fn try_parse<'a>(program: &'a str) -> Result<Vec<Command<'a>>, peg::ParseError> {
+pub fn try_parse(program: &str) -> Result<Vec<Command>, peg::ParseError> {
     peg::program(program)
 }
 

@@ -76,13 +76,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
 
     fn build_label_table(&mut self) {
-        // for some reason we cannot use enumerate() here, so we must use a manual increment iterator
-        let mut iter = 0;
-        for command in self.prog {
+
+        for (index, command) in self.prog.iter().enumerate() {
             if let Command::Label(name) = *command {
-                self.label_table.insert(name, iter);
+                self.label_table.insert(name, index);
             }
-            iter += 1;
         }
     }
 }
