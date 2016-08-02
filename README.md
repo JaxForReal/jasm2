@@ -166,6 +166,8 @@ reads stdin as a u32, and saves to address 0
 read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to ```data `string` -> poniter```, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
 #### read_char
 reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0.
+#### render_graphics
+See Graphics section
 
 ## Data in code
 ### Syntax
@@ -192,6 +194,7 @@ data `qwerty` -> 10
 will set @0 113, @1 to 119, etc...
 
 
-
-
-<test>
+## Display
+Jasm allows you to write to a 20x20 black and white display
+### Writing
+Memory locations 1000 to 1400 are automatically mapped to the display, and can be drawn to the screen with `syscall render_graphics`
