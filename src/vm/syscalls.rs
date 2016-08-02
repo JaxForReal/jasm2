@@ -11,6 +11,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             "read" => self.read(),
             "read_string" => self.read_string(),
             "read_char" => self.read_char(),
+            "render_graphics" => self.render_graphics(),
+            "delay" => self.delay(),
             _ => panic!("unknown syscall"),
         }
     }
@@ -58,5 +60,16 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         io::stdin().read_line(&mut input).expect("couldnt read from stdin");
         let chr = input.chars().nth(0).unwrap_or(0 as char) as u32;
         self.set_ram(0, chr);
+    }
+
+    //render graphics to screen
+    fn render_graphics(&mut self) {
+        self.sdl.render();
+    }
+
+    // delay for @0 milliseconds
+    fn delay(&mut self) {
+        let time = self.get_ram(0);
+        self.sdl.timer.delay(time);
     }
 }

@@ -27,6 +27,7 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [ ] memory mapping for graphics output
 - [ ] memory mapping for mouse location, keys pressed, other SDL events
 - [ ] syscalls for input events
+- [ ] ability to run in either console or graphics mode
 
 # Language
 ## Values
@@ -168,6 +169,8 @@ read a string from stdin, and saves it as a string of chars, starting at the poi
 reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0.
 #### render_graphics
 See Graphics section
+#### delay
+gets the value in cell 0, and pauses for that many milliseconds (uses Sdl2 timer subsystem)
 
 ## Data in code
 ### Syntax

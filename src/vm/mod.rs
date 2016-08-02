@@ -85,7 +85,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.ram[index] = value;
 
         // if within graphics memory mapping, update the screen buffer as well
-        if GRAPHICS_LOCATION.contains(index) {
+        if (index >= GRAPHICS_LOCATION.start) && (index < GRAPHICS_LOCATION.end) {
             self.sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = if value == 0 {
                 false
             } else {
