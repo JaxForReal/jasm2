@@ -8,7 +8,7 @@ mod instructions;
 mod test;
 
 // ram size in cells
-const RAM_SIZE: usize = 1024;
+const RAM_SIZE: usize = 2048;
 
 pub struct Vm<'a, TOut: Write> {
     // vector of commands, executed sequentially

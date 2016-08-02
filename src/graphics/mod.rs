@@ -8,7 +8,7 @@ use self::sdl2::render;
 use self::sdl2::video;
 use self::sdl2::pixels;
 use self::sdl2::rect;
-use self::sdl2::event::Event;
+use self::sdl2::event;
 
 // the width and height of the buffer (size = BUFFER_WIDTH * BUFFER_WIDTH)
 const BUFFER_WIDTH: usize = 20;
@@ -20,9 +20,13 @@ static TRUE_COLOR: pixels::Color = pixels::Color::RGB(0, 0, 0);
 static FALSE_COLOR: pixels::Color = pixels::Color::RGB(255, 255, 255);
 
 pub struct MySdl<'a> {
+    // buffer that is drawn to the screen when self.render() is called
     pub screen_buffer: [bool; BUFFER_WIDTH * BUFFER_WIDTH],
+
     renderer: render::Renderer<'a>,
+
     event_pump: sdl2::EventPump,
+
     pub timer: sdl2::TimerSubsystem,
 }
 
@@ -66,15 +70,12 @@ impl<'a> MySdl<'a> {
         self.renderer.present();
     }
 
+    // checks if there is an event in the queue, returns Some(event) is there is
     pub fn next_event(&mut self) -> Option<MyEvent> {
         match self.event_pump.poll_event() {
             None => None,
-            Some(event) => {
-                Some(match event {
-                    Event::Quit { .. } => MyEvent::Quit,
-                    _ => MyEvent::DoNothingTest,
-                })
-            }
+            Some(event::Event::Quit { .. }) => Some(MyEvent::Quit),
+            _ => None,
         }
     }
 }

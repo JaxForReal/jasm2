@@ -1,4 +1,3 @@
 pub enum MyEvent {
-    Quit, 
-    DoNothingTest,
+    Quit,
 }
