@@ -6,6 +6,7 @@ mod test;
 
 pub mod parser;
 pub mod vm;
+pub mod graphics;
 
 use std::env;
 use std::fs::File;
@@ -24,4 +25,12 @@ fn main() {
     // println!("{:?}", parsed_program);
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
+
+    let mut my_sdl = graphics::MySdl::new();
+    my_sdl.render();
+   	loop {
+        if let Some(graphics::MyEvent::Quit) = my_sdl.next_event() {
+            break;
+        }
+    }
 }
