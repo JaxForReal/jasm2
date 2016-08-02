@@ -1,6 +1,9 @@
 use super::parser::{Command, Value};
 use std::collections::HashMap;
 use std::io::Write;
+use std::ops;
+
+use graphics;
 
 mod syscalls;
 mod instructions;
@@ -9,6 +12,9 @@ mod test;
 
 // ram size in cells
 const RAM_SIZE: usize = 2048;
+
+// the range in memory where the graphics output will be mapped
+static GRAPHICS_LOCATION: ops::Range<usize> = 1000..1400;
 
 pub struct Vm<'a, TOut: Write> {
     // vector of commands, executed sequentially
@@ -26,6 +32,9 @@ pub struct Vm<'a, TOut: Write> {
 
     // translates label names to the instruction pointer where that function begins
     label_table: HashMap<&'a str, usize>,
+
+    // used to draw graphics to screen
+    sdl: graphics::MySdl<'a>,
 }
 
 impl<'a, TOut: Write> Vm<'a, TOut> {
@@ -37,6 +46,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             call_stack: Vec::new(),
             instruction_pointer: 0,
             label_table: HashMap::new(),
+            sdl: graphics::MySdl::new(),
         }
     }
 
@@ -73,6 +83,15 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     fn set_ram(&mut self, index: usize, value: u32) {
         self.ram[index] = value;
+
+        // if within graphics memory mapping, update the screen buffer as well
+        if GRAPHICS_LOCATION.contains(index) {
+            self.sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = if value == 0 {
+                false
+            } else {
+                true
+            };
+        }
     }
 
     fn build_label_table(&mut self) {
