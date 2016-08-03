@@ -34,7 +34,12 @@ pub struct Vm<'a, TOut: Write> {
     label_table: HashMap<&'a str, usize>,
 
     // used to draw graphics to screen
-    sdl: graphics::MySdl<'a>,
+    // Some(sdl) if in graphics mode
+    // None if in console mode
+    sdl: Option<graphics::MySdl<'a>>,
+
+    // if true, graphics mode is enabled in the program.
+    is_graphics_mode: bool,
 }
 
 impl<'a, TOut: Write> Vm<'a, TOut> {
@@ -46,7 +51,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             call_stack: Vec::new(),
             instruction_pointer: 0,
             label_table: HashMap::new(),
-            sdl: graphics::MySdl::new(),
+            // start in console mode
+            is_graphics_mode: false,
+            sdl: None,
         }
     }
 
@@ -84,14 +91,23 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     fn set_ram(&mut self, index: usize, value: u32) {
         self.ram[index] = value;
 
-        // if within graphics memory mapping, update the screen buffer as well
-        if (index >= GRAPHICS_LOCATION.start) && (index < GRAPHICS_LOCATION.end) {
-            self.sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = if value == 0 {
-                false
-            } else {
-                true
+        // only map memory to screen if in graphics mode
+        if self.is_graphics_mode {
+            let new_sdl = match self.sdl {
+                Some(ref mut new_sdl) => new_sdl,
+                None => panic!("tried to map memory to sdl, but sdl isnt initialized"),
             };
+
+            // if within graphics memory mapping, update the screen buffer as well
+            if (index >= GRAPHICS_LOCATION.start) && (index < GRAPHICS_LOCATION.end) {
+                new_sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = if value == 0 {
+                    false
+                } else {
+                    true
+                };
+            }
         }
+
     }
 
     fn build_label_table(&mut self) {

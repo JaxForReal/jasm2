@@ -1,6 +1,8 @@
 use super::Vm;
 use std::io::{self, Write};
-
+use std::thread;
+use std::time;
+use graphics;
 
 // implement all syscalls of the Vm
 impl<'a, TOut: Write> Vm<'a, TOut> {
@@ -13,6 +15,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             "read_char" => self.read_char(),
             "render_graphics" => self.render_graphics(),
             "delay" => self.delay(),
+            "set_mode" => self.set_mode(),
             _ => panic!("unknown syscall"),
         }
     }
@@ -62,14 +65,31 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.set_ram(0, chr);
     }
 
-    //render graphics to screen
+    // render graphics to screen
     fn render_graphics(&mut self) {
-        self.sdl.render();
+        match self.sdl {
+            Some(ref mut inner_sdl) => inner_sdl.render(),
+            None => panic!("tried to render when Sdl was not initialized"),
+        }
     }
 
     // delay for @0 milliseconds
     fn delay(&mut self) {
         let time = self.get_ram(0);
-        self.sdl.timer.delay(time);
+        thread::sleep(time::Duration::from_millis(time as u64));
+    }
+
+    // sets the mode based on @0
+    // 0 = console
+    // anything else = graphics
+    fn set_mode(&mut self) {
+        if self.get_ram(0) == 0 {
+            self.is_graphics_mode = false;
+            self.sdl = None;
+        } else {
+            // change vm mode, and initialize sdl graphics
+            self.is_graphics_mode = true;
+            self.sdl = Some(graphics::MySdl::new());
+        }
     }
 }
