@@ -61,10 +61,12 @@ impl<'a> MySdl<'a> {
                 };
 
                 self.renderer.set_draw_color(color);
-                self.renderer.fill_rect(rect::Rect::new((iter_x * CELL_SIZE) as i32,
-                                                        (iter_y * CELL_SIZE) as i32,
-                                                        CELL_SIZE as u32,
-                                                        CELL_SIZE as u32)).unwrap();
+                self.renderer
+                    .fill_rect(rect::Rect::new((iter_x * CELL_SIZE) as i32,
+                                               (iter_y * CELL_SIZE) as i32,
+                                               CELL_SIZE as u32,
+                                               CELL_SIZE as u32))
+                    .unwrap();
             }
         }
         self.renderer.present();

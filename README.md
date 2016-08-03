@@ -24,6 +24,7 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
 - [x] Ability to give a printStream to vm, so it can output to tests or stdout
 - [ ] Graceful panics when parsing fails
+- [x] Graceful panics on vm error
 - [x] memory mapping for graphics output
 - [ ] memory mapping for mouse location, keys pressed, other SDL events
 - [ ] syscalls for input events
