@@ -2,6 +2,7 @@ use super::parser::{Command, Value};
 use std::collections::HashMap;
 use std::io::Write;
 use std::ops;
+use std::process;
 
 use graphics;
 
@@ -100,11 +101,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             // if within graphics memory mapping, update the screen buffer as well
             if (index >= GRAPHICS_LOCATION.start) && (index < GRAPHICS_LOCATION.end) {
-                new_sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = if value == 0 {
-                    false
-                } else {
-                    true
-                };
+                new_sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = value != 0;
             }
         }
 
@@ -117,5 +114,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.label_table.insert(name, index);
             }
         }
+    }
+
+    fn error(&self, message: &str) -> ! {
+        let ip = self.instruction_pointer;
+        println!("Error in instruction: {:?}", self.prog[ip]);
+        println!("{}", message);
+        process::exit(1);
     }
 }

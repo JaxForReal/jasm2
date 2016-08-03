@@ -73,9 +73,14 @@ impl<'a> MySdl<'a> {
     // checks if there is an event in the queue, returns Some(event) is there is
     pub fn next_event(&mut self) -> Option<MyEvent> {
         match self.event_pump.poll_event() {
-            None => None,
             Some(event::Event::Quit { .. }) => Some(MyEvent::Quit),
-            _ => None,
+            None | _ => None,
         }
+    }
+}
+
+impl<'a> Default for MySdl<'a> {
+    fn default() -> Self {
+        Self::new()
     }
 }
