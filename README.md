@@ -27,7 +27,7 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [ ] memory mapping for graphics output
 - [ ] memory mapping for mouse location, keys pressed, other SDL events
 - [ ] syscalls for input events
-- [ ] ability to run in either console or graphics mode
+- [x] ability to run in either console or graphics mode
 
 # Language
 ## Values
@@ -157,17 +157,19 @@ Function arguments, assumed to be destroyed on function call or syscall also use
 ```
 syscall name
 ```
-#### print
+#### set_mode
+sets the mode based on value in cell 0. 0 means console mode, anything else is graphics mode. You can go from console mode to graphics mode, but not back. eg. to set graphics mode: `1 -> 0 syscall set_mode`
+#### print (console mode)
 Prints the value in address 0
-#### print_char
+#### print_char (console mode)
 prints the value in address 0 as a utf-8 char
-#### read
+#### read (console mode)
 reads stdin as a u32, and saves to address 0
-#### read_string
+#### read_string (console mode)
 read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to ```data `string` -> poniter```, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
-#### read_char
+#### read_char (console mode)
 reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0.
-#### render_graphics
+#### render_graphics (graphics mode)
 See Graphics section
 #### delay
 gets the value in cell 0, and pauses for that many milliseconds (uses Sdl2 timer subsystem)
