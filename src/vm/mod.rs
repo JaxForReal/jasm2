@@ -96,7 +96,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         if self.is_graphics_mode {
             let new_sdl = match self.sdl {
                 Some(ref mut new_sdl) => new_sdl,
-                None => panic!("tried to map memory to sdl, but sdl isnt initialized"),
+                None => self.error("tried to map memory to sdl, but sdl isnt initialized"),
             };
 
             // if within graphics memory mapping, update the screen buffer as well
@@ -118,7 +118,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     fn error(&self, message: &str) -> ! {
         let ip = self.instruction_pointer;
-        println!("Error in instruction: {:?}", self.prog[ip]);
+        println!("Error in instruction: `{:?}`", self.prog[ip]);
         println!("{}", message);
         process::exit(1);
     }

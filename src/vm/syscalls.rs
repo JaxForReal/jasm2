@@ -16,7 +16,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             "render_graphics" => self.render_graphics(),
             "delay" => self.delay(),
             "set_mode" => self.set_mode(),
-            _ => panic!("unknown syscall"),
+            _ => self.error(&format!("unknown syscall: {}", name)),
         }
     }
 
@@ -27,21 +27,27 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         // convert u32 to string, to get the digits as individual chars
         // then convert the digit characters to a byte array to pass to output
         let value = self.get_ram(0).to_string();
-        self.output.write(value.as_bytes()).expect("couldnt write to output");
+        if let Err(..) = self.output.write(value.as_bytes()) {
+            self.error("couldnt write to stdout")
+        }
     }
 
     // print the value in address 0 as an ascii char
     fn print_char(&mut self) {
         let value = self.get_ram(0);
         // write the value directly to out, because stdout formats as a char
-        self.output.write(&[value as u8]).expect("couldnt write to output");
+        if let Err(..) = self.output.write(&[value as u8]) {
+            self.error("couldnt write to output");
+        }
     }
 
     // read a single value into address 0
-    // returns 0 if the value coild not e parsed.
+    // returns 0 if the value coild not be parsed.
     fn read(&mut self) {
         let mut input = String::new();
-        io::stdin().read_line(&mut input).expect("couldnt read from stdin");
+        if let Err(..) = io::stdin().read_line(&mut input) {
+            self.error("couldnt read from stdin");
+        }
         let value = input.trim().parse::<u32>().unwrap_or(0);
         self.set_ram(0, value);
     }
@@ -51,7 +57,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         let save_pointer = self.get_ram(0);
 
         let mut input = String::new();
-        io::stdin().read_line(&mut input).expect("oculdnt read from stdin");
+        if let Err(..) = io::stdin().read_line(&mut input) {
+            self.error("oculdnt read from stdin");
+        }
         for (index, chr) in input.chars().enumerate() {
             self.set_ram(save_pointer as usize + index, chr as u32);
         }
@@ -60,8 +68,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // reads a single utf-8 char to memory cell 0
     fn read_char(&mut self) {
         let mut input = String::new();
-        io::stdin().read_line(&mut input).expect("couldnt read from stdin");
-        let chr = input.chars().nth(0).unwrap_or(0 as char) as u32;
+        if let Err(..) = io::stdin().read_line(&mut input) {
+            self.error("couldnt read from stdin");
+        }
+        let chr = input.chars().next().unwrap_or(0 as char) as u32;
         self.set_ram(0, chr);
     }
 
@@ -69,7 +79,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     fn render_graphics(&mut self) {
         match self.sdl {
             Some(ref mut inner_sdl) => inner_sdl.render(),
-            None => panic!("tried to render when Sdl was not initialized"),
+            None => self.error("Tried to render when Sdl was not initialized."),
         }
     }
 
