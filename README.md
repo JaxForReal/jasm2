@@ -29,6 +29,7 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [ ] memory mapping for mouse location, keys pressed, other SDL events
 - [ ] syscalls for input events
 - [x] ability to run in either console or graphics mode
+- [ ] convert all print_XXXX syscalls to a single print syscall
 
 # Language
 ## Values
@@ -164,6 +165,8 @@ sets the mode based on value in cell 0. 0 means console mode, anything else is g
 Prints the value in address 0
 #### print_char (console mode)
 prints the value in address 0 as a utf-8 char
+#### print_binary (console mode)
+prints the value in address 0 as a binary string eg. "10110100001"
 #### read (console mode)
 reads stdin as a u32, and saves to address 0
 #### read_string (console mode)

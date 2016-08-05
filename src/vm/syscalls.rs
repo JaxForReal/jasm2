@@ -10,6 +10,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         match name {
             "print" => self.print(),
             "print_char" => self.print_char(),
+            "print_binary" => self.print_binary(),
             "read" => self.read(),
             "read_string" => self.read_string(),
             "read_char" => self.read_char(),
@@ -37,6 +38,13 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         let value = self.get_ram(0);
         // write the value directly to out, because stdout formats as a char
         if let Err(..) = self.output.write(&[value as u8]) {
+            self.error("couldnt write to output");
+        }
+    }
+
+    fn print_binary(&mut self) {
+        let value = self.get_ram(0);
+        if let Err(..) = self.output.write(format!("{:b}", value).as_bytes()) {
             self.error("couldnt write to output");
         }
     }
