@@ -31,9 +31,11 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [x] ability to run in either console or graphics mode
 - [ ] convert all print_XXXX syscalls to a single print syscall
 
-# Language
+# Documentation
+## General
+An array of 2048 memory cells are provided for your program. Each cell is an unsigned 32 bit number. Commands are not comma separated, command separation is inferred. This allows the convienence of two commonly grouped commands on one line eg `1 -> 0 syscall setmode`. 
 ## Values
-A value can be either an address or a number.  
+A value can be either an address to a cell (a pointer) or a number.  
 ### Addresses
 `@2` gives the value of memory cell #2  
 `@@5` gives the value of the memory cell at (the value of memory cell 5)  
@@ -46,22 +48,22 @@ Unlimited levels of pointer indirection are supported. Ex `@@@@@23` is a valid v
 
 ## Binary Operators
 currently implemented operators:
-* add
-* sub
-* mul
-* div
-* and
-* or
-* xor
-* leftshift
-* rightshift
-* compare
+* `add`
+* `sub`
+* `mul`
+* `div`
+* `and`
+* `or`
+* `xor`
+* `leftshift`
+* `rightshift`
+* `compare`
 
 ### Syntax
 ```
 operator value value -> value
 ```
-NOTE: the destination (after the arrow) is a memory address. So to store a result to memory cell #3, you would write `add 4 5 -> 3`
+NOTE: the destination (after the arrow) is a memory address. So to store a result to memory cell #3, you would write `add 4 5 -> 3`. To store in the cell that cell 4 points to, use `add 4 5 -> @4`. This is a bit counterintuitive, but makes the language more uniform, because values are accepted anywhere in syntax.
 
 
 ### Example
@@ -94,7 +96,7 @@ Calling a function syntax
 call func_name
 ```
 
-##Labels
+## Labels
 ### Syntax
 ```
 <_label_name>
@@ -148,44 +150,54 @@ Least significant end of value
 
 Most significant end of value
 
-
-## Memory usage conventions
-### cells 0-9:
-Function arguments, assumed to be destroyed on function call or syscall also used by functions to return data.
-
-
 ## Syscalls
 ### Syntax
 ```
 syscall name
 ```
-#### set_mode
+
+#### In any mode (Console or graphics)
+
+- **set_mode** 
 sets the mode based on value in cell 0. 0 means console mode, anything else is graphics mode. You can go from console mode to graphics mode, but not back. eg. to set graphics mode: `1 -> 0 syscall set_mode`
-#### print (console mode)
-Prints the value in address 0
-#### print_char (console mode)
-prints the value in address 0 as a utf-8 char
-#### print_binary (console mode)
-prints the value in address 0 as a binary string eg. "10110100001"
-#### read (console mode)
-reads stdin as a u32, and saves to address 0
-#### read_string (console mode)
-read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to ```data `string` -> poniter```, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
-#### read_char (console mode)
-reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0.
-#### render_graphics (graphics mode)
-See Graphics section
-#### delay
+
+- **delay**
 gets the value in cell 0, and pauses for that many milliseconds (uses Sdl2 timer subsystem)
+
+#### Console mode only:
+
+
+- **print**
+Prints the value in address 0
+
+- **print_char**
+Prints the value in address 0 as a utf-8 char
+
+- **print_binary**
+Prints the value in address 0 as a binary string eg. "10110100001"
+
+- **read**
+Reads stdin as a u32, and saves to address 0. (Destroys @0)
+
+- **read_string**
+Read a string from stdin, and saves it as a string of chars, starting at the pointer defined in address 0. Similar to ```data `string` -> poniter```, but at runtime. for example, if the value 5 was stored in @0, then the char #0 of the string would be at @5, char # 1 would be at @6, etc...
+
+- **read_char**
+Reads the first character of stdin, and converts it to a u32, stored at @0. For example, inputting 'a' will result in 97 being stored at @0. (Destroys @0)
+
+#### Graphics mode only:
+
+- **render_graphics**
+Draws cells 1000-1400 to the screen.
+
+
 
 ## Data in code
 ### Syntax
 ```
 data value value value value -> value
 ```
-Adds any number of values to memory in sequence, starting at destination.  
-  
-Or
+Adds any number of values to memory in sequence, starting at destination. Or:
 ```
 data `string` -> value
 ```
@@ -193,17 +205,18 @@ Adds each character of the string in a new memory cell, starting at destination.
 
 ### Example
 ```
-data 5 3 48 5 9 1 -> 0
+data 5 'A 48 b1011 9 1 -> 0
 ```
-will set @0 to 3, @1 to 3, @2 to 48, etc.  
+Will set @0 to 5, @1 to 97, @2 to 11, etc.  
   
 ```
 data `qwerty` -> 10
 ```
-will set @0 113, @1 to 119, etc...
+Will set @10 113, @11 to 119, etc...
 
 
 ## Display
 Jasm allows you to write to a 20x20 black and white display
 ### Writing
-Memory locations 1000 to 1400 are automatically mapped to the display, and can be drawn to the screen with `syscall render_graphics`
+Memory locations 1000 to 1400 are automatically mapped to the display, and can be drawn to the screen with `syscall render_graphics`  
+A value of zero means the pixel is off, and other value means the pixel is on.
