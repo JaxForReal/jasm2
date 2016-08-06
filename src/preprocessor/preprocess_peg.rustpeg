@@ -1,0 +1,22 @@
+#[export]
+program -> Vec<(&'input str, &'input str, &'input str)>
+    = includes: (possible_include)* { includes }
+
+#[export]
+possible_include -> (&'input str, &'input str, &'input str)
+    = before:everything_but_trigger incl:include_statement after:everything_but_trigger
+    { (before, incl, after) }
+
+#[export]
+include_statement -> &'input str
+    = include_trigger p:path include_terminator { p }
+
+path -> &'input str
+    = (!include_terminator .)+ { match_str }
+
+include_trigger = '#include "'
+
+include_terminator = '"'
+
+everything_but_trigger -> &'input str
+    = (!include_trigger .)* { match_str }
