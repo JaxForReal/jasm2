@@ -1,0 +1,19 @@
+#[export]
+program -> Vec<(&'input str, &'input str)>
+    = e:everything_but_trigger { Vec::new() }
+    / defs: (possible_define)* { defs }
+
+possible_define -> (&'input str, &'input str)
+    = everything_but_trigger def:define everything_but_trigger
+    { def }
+
+define -> (&'input str, &'input str)
+    = define_trigger " " find:ident " " replace:ident "\n"
+    { (find, replace) }
+
+define_trigger = "//#define"
+
+ident -> &'input str
+    = (!" " !define_trigger !"\n" .)+ { match_str }
+
+everything_but_trigger = (!define_trigger .)*

@@ -14,7 +14,7 @@ Compiled with `rustc 1.11.0-nightly (ad7fe6521 2016-06-23)`
 - [x] Remove need for semicolons at end of lines
 - [x] ASCII value types
 - [ ] New parser for a machine syntax that is easy to compile to (but less readable)
-- [ ] imports or links to other jasm files
+- [x] imports or links to other jasm files
 - [ ] syscall for reading environment arguments
 - [x] gui syscalls (see below, doing graphics output instead)
 - [ ] Ability to package as exe (with interpreter included?)

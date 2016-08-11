@@ -1,6 +1,7 @@
 #[export]
-program -> Vec<(&'input str, &'input str, &'input str)>
-    = includes: (possible_include)* { includes }
+program -> (&'input str, Vec<(&'input str, &'input str, &'input str)> )
+    = e:everything_but_trigger { (e, Vec::new()) }
+    / includes: (possible_include)* { ("", includes) }
 
 #[export]
 possible_include -> (&'input str, &'input str, &'input str)
@@ -14,7 +15,7 @@ include_statement -> &'input str
 path -> &'input str
     = (!include_terminator .)+ { match_str }
 
-include_trigger = '#include "'
+include_trigger = '//#include "'
 
 include_terminator = '"'
 
