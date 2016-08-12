@@ -20,7 +20,7 @@ Compiled with `rustc 1.12.0-nightly (0ef24eed2 2016-08-10)`
 - [ ] Ability to package as exe (with interpreter included?)
 - [ ] different arrow syntax
 - [ ] New name to not conflict with JVM Bytecode Assembler
-- [ ] ability to define constants, and other preprocessor directives
+- [x] ability to define constants, and other preprocessor directives
 - [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
 - [x] Ability to give a printStream to vm, so it can output to tests or stdout
 - [ ] Graceful panics when parsing fails
@@ -220,3 +220,40 @@ Jasm allows you to write to a 20x20 black and white display
 ### Writing
 Memory locations 1000 to 1400 are automatically mapped to the display, and can be drawn to the screen with `syscall render_graphics`  
 A value of zero means the pixel is off, and other value means the pixel is on.
+
+
+## Examples
+
+Draw diagonal lines on screen
+```
+// this is the mask the separates out the
+// "less than" flag from the compare result
+\#define LESS_THAN b100
+
+//put into graphics mode
+1 -> 0 syscall set_mode
+
+// start at address 1000, the start of the screen virtual memory
+// this is the pointer to the cell we will change
+1000 -> 1
+
+<_loop_start>
+
+// turn pixel on
+1 -> @1
+
+// advance 3 pixels
+add 3 @1 -> 1
+
+// compare to 1400, see is it is less than
+// if so, jump to start of loop
+compare @1 1400 -> 0
+and @0 LESS_THAN -> 0
+jumpnotzero @0 _loop_start
+
+// render the graphics
+syscall render_graphics
+
+// wait for 2 seconds
+2000 -> 0 syscall delay
+```
