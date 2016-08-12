@@ -228,7 +228,7 @@ Draw diagonal lines on screen
 ```
 // this is the mask the separates out the
 // "less than" flag from the compare result
-\#define LESS_THAN b100
+#define LESS_THAN b100
 
 //put into graphics mode
 1 -> 0 syscall set_mode
