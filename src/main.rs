@@ -22,7 +22,7 @@ fn main() {
     let mut program = String::new();
     file.read_to_string(&mut program).expect("could not read file");
 
-    preprocessor::preprocess(&program);
+    program = preprocessor::preprocess(&program);
     let parsed_program = match parser::try_parse(&program) {
         Ok(prog) => prog,
         Err(err) => panic!("Error parsing: {}", err)
