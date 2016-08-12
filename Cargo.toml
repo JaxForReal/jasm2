@@ -6,3 +6,4 @@ authors = ["JaxForReal <jackpribis@gmail.com>"]
 [dependencies]
 peg = "0.3.13"
 sdl2 = "0.22.0"
+regex = "0.1.73"

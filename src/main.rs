@@ -7,7 +7,7 @@ mod test;
 pub mod parser;
 pub mod vm;
 pub mod graphics;
-//pub mod preprocessor;
+pub mod preprocessor;
 
 use std::env;
 use std::fs::File;
@@ -22,8 +22,11 @@ fn main() {
     let mut program = String::new();
     file.read_to_string(&mut program).expect("could not read file");
 
-    //preprocessor::preprocess(&program, &filename);
-    let parsed_program = parser::try_parse(&program).expect("could not parse program");
+    preprocessor::preprocess(&program);
+    let parsed_program = match parser::try_parse(&program) {
+        Ok(prog) => prog,
+        Err(err) => panic!("Error parsing: {}", err)
+    };
 
     // println!("{:?}", parsed_program);
     let stdout = io::stdout();
