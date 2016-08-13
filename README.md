@@ -248,6 +248,7 @@ syscall render_graphics
 // wait for 2 seconds
 2000 -> 0 syscall delay
 ```
+<<<<<<< HEAD
 
 ## ToDo
 
@@ -278,3 +279,5 @@ syscall render_graphics
 - [ ] syscalls for input events
 - [x] ability to run in either console or graphics mode
 - [ ] convert all print_XXXX syscalls to a single print syscall
+=======
+>>>>>>> a0c53a4d4f55043edb0d83551b272c54d24cb001
