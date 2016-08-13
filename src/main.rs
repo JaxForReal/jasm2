@@ -24,7 +24,7 @@ fn main() {
     file.read_to_string(&mut program).expect("could not read file");
 
     program = preprocessor::preprocess(&program, file_path);
-    println!("{}", program);
+    // println!("{}", program);
     let parsed_program = match parser::try_parse(&program) {
         Ok(prog) => prog,
         Err(err) => panic!("Error parsing: {}", err),

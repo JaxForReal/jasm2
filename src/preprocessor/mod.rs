@@ -26,10 +26,14 @@ fn process_includes(program: &str, program_path: &Path) -> String {
         // remove the `#include "path"` from the program because it breaks the parser
         program.drain(incl_start_pos..incl_end_pos);
 
-        let file_path = format!("{}{}",
-                                program_path.parent().unwrap().to_str().unwrap(),
-                                captures.name("filename").unwrap());
-        let file_string = get_file_string(&file_path);
+        let file_path_str = format!("{}{}",
+                                    program_path.parent().unwrap().to_str().unwrap(),
+                                    captures.name("filename").unwrap());
+        let file_path = Path::new(&file_path_str);
+
+        // recursivley import
+        let file_string = process_includes(&get_file_string(&file_path),
+                                           file_path);
 
         // insert the included file to the middle of program
         program = format!("{}{}{}",
@@ -42,13 +46,13 @@ fn process_includes(program: &str, program_path: &Path) -> String {
 }
 
 // gets the string contents of a file represented by file_path
-fn get_file_string(file_path: &str) -> String {
+fn get_file_string(file_path: &Path) -> String {
     let mut file = File::open(file_path)
-        .expect(&format!("could not open included file: `{}`", file_path));
+        .expect(&format!("could not open included file: `{:?}`", file_path));
 
     let mut include_str = String::new();
     file.read_to_string(&mut include_str)
-        .expect(&format!("could not read included file: `{}`", file_path));
+        .expect(&format!("could not read included file: `{:?}`", file_path));
 
     include_str
 }
