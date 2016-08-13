@@ -1,36 +1,6 @@
 # Jasm2
 Compiled with `rustc 1.12.0-nightly (0ef24eed2 2016-08-10)`
 
-## ToDo
-
-- [x] Branching Syntax
-- [x] How to handle nested functions and declarations?
-- [x] How to pass data to syscalls without hardcoded argument addresses?
-- [x] Retrieve data at non-32bit addresses, between cells (sort of done with bit operations)
-- [x] Consider using i32 instead of u32 for memory cells (decided against)
-- [x] Write tests for parser
-- [ ] Write tests for Vm
-- [x] Fix enumerate() not working when building function_table and data operations
-- [x] Remove need for semicolons at end of lines
-- [x] ASCII value types
-- [ ] New parser for a machine syntax that is easy to compile to (but less readable)
-- [x] imports or links to other jasm files
-- [ ] syscall for reading environment arguments
-- [x] gui syscalls (see below, doing graphics output instead)
-- [ ] Ability to package as exe (with interpreter included?)
-- [ ] different arrow syntax
-- [ ] New name to not conflict with JVM Bytecode Assembler
-- [x] ability to define constants, and other preprocessor directives
-- [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
-- [x] Ability to give a printStream to vm, so it can output to tests or stdout
-- [ ] Graceful panics when parsing fails
-- [x] Graceful panics on vm error
-- [x] memory mapping for graphics output
-- [ ] memory mapping for mouse location, keys pressed, other SDL events
-- [ ] syscalls for input events
-- [x] ability to run in either console or graphics mode
-- [ ] convert all print_XXXX syscalls to a single print syscall
-
 # Documentation
 ## General
 An array of 2048 memory cells are provided for your program. Each cell is an unsigned 32 bit number. Commands are not comma separated, command separation is inferred. This allows the convienence of two commonly grouped commands on one line eg `1 -> 0 syscall setmode`. 
@@ -221,6 +191,27 @@ Jasm allows you to write to a 20x20 black and white display
 Memory locations 1000 to 1400 are automatically mapped to the display, and can be drawn to the screen with `syscall render_graphics`  
 A value of zero means the pixel is off, and other value means the pixel is on.
 
+## Preprocessor
+Jasm includes a simple preprocessor that can define constants and include other files.
+### Syntax
+```
+#define CONST_NAME value
+```
+This searches through the program, and replaces every match of "CONST_NAME" with "value". NOTE: the entire program is searched, so constants before the `#define` are also replaced. 
+  
+```
+#include "/path/to/file.jasm"
+```
+Replaces this include text with the contents of file.jasm. Files are relative to the parent directory of the file being processed. For example if you are running `/home/me/main.jasm`, you can write `#include "/other.jasm"`, and `/home/me/other.jasm` will be included into the file.
+### Example
+```
+add PIN_NUMBER 1 -> 0
+#define PIN_NUMBER 45
+```
+Will expand to
+```
+add 45 1 -> 0
+```
 
 ## Examples
 
@@ -257,3 +248,33 @@ syscall render_graphics
 // wait for 2 seconds
 2000 -> 0 syscall delay
 ```
+
+## ToDo
+
+- [x] Branching Syntax
+- [x] How to handle nested functions and declarations?
+- [x] How to pass data to syscalls without hardcoded argument addresses?
+- [x] Retrieve data at non-32bit addresses, between cells (sort of done with bit operations)
+- [x] Consider using i32 instead of u32 for memory cells (decided against)
+- [x] Write tests for parser
+- [ ] Write tests for Vm
+- [x] Fix enumerate() not working when building function_table and data operations
+- [x] Remove need for semicolons at end of lines
+- [x] ASCII value types
+- [ ] New parser for a machine syntax that is easy to compile to (but less readable)
+- [x] imports or links to other jasm files
+- [ ] syscall for reading environment arguments
+- [x] gui syscalls (see below, doing graphics output instead)
+- [ ] Ability to package as exe (with interpreter included?)
+- [ ] different arrow syntax
+- [ ] New name to not conflict with JVM Bytecode Assembler
+- [x] ability to define constants, and other preprocessor directives
+- [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
+- [x] Ability to give a printStream to vm, so it can output to tests or stdout
+- [ ] Graceful panics when parsing fails
+- [x] Graceful panics on vm error
+- [x] memory mapping for graphics output
+- [ ] memory mapping for mouse location, keys pressed, other SDL events
+- [ ] syscalls for input events
+- [x] ability to run in either console or graphics mode
+- [ ] convert all print_XXXX syscalls to a single print syscall

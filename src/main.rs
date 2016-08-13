@@ -16,16 +16,18 @@ use std::path::Path;
 
 fn main() {
     // skip the 0th arg, because it is inherently the path of the binary (useless here)
-    let filename = env::args().nth(1).expect("No input file");
-    let mut file = File::open(Path::new(&filename)).expect("could not open file");
+    let path_string = &env::args().nth(1).expect("No input file");
+    let file_path = Path::new(path_string);
+    let mut file = File::open(file_path).expect("could not open file");
 
     let mut program = String::new();
     file.read_to_string(&mut program).expect("could not read file");
 
-    program = preprocessor::preprocess(&program);
+    program = preprocessor::preprocess(&program, file_path);
+    println!("{}", program);
     let parsed_program = match parser::try_parse(&program) {
         Ok(prog) => prog,
-        Err(err) => panic!("Error parsing: {}", err)
+        Err(err) => panic!("Error parsing: {}", err),
     };
 
     // println!("{:?}", parsed_program);
