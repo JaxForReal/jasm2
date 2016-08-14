@@ -64,6 +64,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
         while self.instruction_pointer < self.prog.len() {
             let next_command = &self.prog[self.instruction_pointer];
+            info!("executing command (index {}): {:?}",
+                  self.instruction_pointer,
+                  next_command);
             if !self.exec_single_command(next_command) {
                 return;
             }
@@ -74,6 +77,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // returns u32 of a value field.
     // needs to be &mut self because retrieving values can cause ram to grow
     fn get_value(&mut self, value: &Value) -> u32 {
+        trace!("resolving value: {:?}", value);
         match *value {
             Value::U32(n) => n,
             Value::Address(ref address) => {
@@ -86,10 +90,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // retirives the <index> value of ram.
     // If it is ouside the vector length, auto grows vector
     fn get_ram(&self, index: usize) -> u32 {
+        trace!("fetching ram at index: {}", index);
         self.ram[index]
     }
 
     fn set_ram(&mut self, index: usize, value: u32) {
+        trace!("setting ram index {} to {}", index, value);
         self.ram[index] = value;
 
         // only map memory to screen if in graphics mode
@@ -101,6 +107,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             // if within graphics memory mapping, update the screen buffer as well
             if (index >= GRAPHICS_LOCATION.start) && (index < GRAPHICS_LOCATION.end) {
+                trace!("copying ram to screen buffer");
                 new_sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = value != 0;
             }
         }
@@ -108,9 +115,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
 
     fn build_label_table(&mut self) {
+        trace!("Building label table");
 
         for (index, command) in self.prog.iter().enumerate() {
             if let Command::Label(name) = *command {
+                trace!("found label: '{}' at command index: {}", name, index);
                 self.label_table.insert(name, index);
             }
         }

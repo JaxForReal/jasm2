@@ -39,9 +39,23 @@ fn main() {
             .long("emit")
             .takes_value(true)
             .possible_values(&["preprocessed", "parsed"]))
+        .arg(Arg::with_name("log_level")
+            .short("l")
+            .long("log-level")
+            .takes_value(true)
+            .possible_values(&["off", "error", "warn", "info", "debug", "trace"])
+            .default_value("off"))
         .get_matches();
 
-    setup_logger(log::LogLevelFilter::Trace);
+    setup_logger(match matches.value_of("log_level").unwrap() {
+        "off" => log::LogLevelFilter::Off,
+        "error" => log::LogLevelFilter::Error,
+        "warn" => log::LogLevelFilter::Warn,
+        "info" => log::LogLevelFilter::Info,
+        "debug" => log::LogLevelFilter::Debug,
+        "trace" => log::LogLevelFilter::Trace,
+        _ => panic!("unknown log level"),
+    });
 
     let mut program = String::new();
     let current_pathbuf = env::current_dir().unwrap();
@@ -87,8 +101,8 @@ fn setup_logger(log_level: log::LogLevelFilter) {
                 log::LogLevel::Error => "[31m",// red
                 log::LogLevel::Warn => "[33m",// yellow
                 log::LogLevel::Info => "[32m",// green
-                log::LogLevel::Debug => "[34m",// blue
-                log::LogLevel::Trace => "[35m",// purple
+                log::LogLevel::Debug => "[35m",// purple
+                log::LogLevel::Trace => "[34m",// blue
             };
 
             format!("[{module}:L{line}] {escape}{color}{log}{escape}[0m",

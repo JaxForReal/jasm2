@@ -108,9 +108,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // anything else = graphics
     fn set_mode(&mut self) {
         if self.get_ram(0) == 0 {
+            trace!("turning off graphics mode");
             self.is_graphics_mode = false;
             self.sdl = None;
         } else {
+            trace!("turning on graphcis mode");
             // change vm mode, and initialize sdl graphics
             self.is_graphics_mode = true;
             self.sdl = Some(graphics::MySdl::new());

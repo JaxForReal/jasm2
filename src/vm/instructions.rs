@@ -26,21 +26,27 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.auto_binary_op(l, r, d, |a, b| {
                     let mut ret = 0;
                     if a == b {
+                        trace!("compare equal found");
                         ret |= 0b1;
                     };
                     if a != b {
+                        trace!("compare not equal found");
                         ret |= 0b10;
                     };
                     if a < b {
+                        trace!("compare less than found");
                         ret |= 0b100;
                     };
                     if a > b {
+                        trace!("compare greater than found");
                         ret |= 0b1000;
                     };
                     if a <= b {
+                        trace!("compare less than or equal found");
                         ret |= 0b10000;
                     };
                     if a >= b {
+                        trace!("compare greater than or equal found");
                         ret |= 0b100000;
                     };
                     ret
@@ -60,6 +66,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             }
 
             Command::Call(name) => {
+                trace!("calling function: {}", name);
                 // save our current place in program so we can return from call
                 self.call_stack.push(self.instruction_pointer);
                 // jump to the function that we looked up in the table
@@ -70,9 +77,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 let prev_position_maybe = self.call_stack.pop();
 
                 if let Some(prev_position) = prev_position_maybe {
+                    trace!("returning to previous instruction index: {}", prev_position);
                     // there is a function to return to, so set IP to last call position
                     self.instruction_pointer = prev_position;
                 } else {
+                    trace!("returning from top level, exiting");
                     // this means we are returning from top level code, and we should stop execution
                     return false;
                 }
@@ -80,12 +89,14 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             Command::JumpZero(ref a, name) => {
                 if self.get_value(a) == 0 {
+                    trace!("jumpzero with 0 value, jumping to: {}", name);
                     // jump to label defined by name
                     self.instruction_pointer = self.label_table[name]
                 }
             }
             Command::JumpNotZero(ref a, name) => {
                 if self.get_value(a) != 0 {
+                    trace!("jumpnotzero with nonzero value, jumping to: {}", name);
                     // jump to label defined by name
                     self.instruction_pointer = self.label_table[name]
                 }
