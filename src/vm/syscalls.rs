@@ -31,6 +31,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         if let Err(..) = self.output.write(value.as_bytes()) {
             self.error("couldnt write to stdout")
         }
+        // need to flush because stdout is line buffered, and will not update with single char
+        self.output.flush().unwrap();
     }
 
     // print the value in address 0 as an ascii char
@@ -40,6 +42,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         if let Err(..) = self.output.write(&[value as u8]) {
             self.error("couldnt write to output");
         }
+        // need to flush because stdout is line buffered, and will not update with single char
+        self.output.flush().unwrap();
     }
 
     fn print_binary(&mut self) {
@@ -47,6 +51,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         if let Err(..) = self.output.write(format!("{:b}", value).as_bytes()) {
             self.error("couldnt write to output");
         }
+        // need to flush because stdout is line buffered, and will not update with single char
+        self.output.flush().unwrap();
     }
 
     // read a single value into address 0

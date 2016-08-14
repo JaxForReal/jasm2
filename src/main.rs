@@ -2,14 +2,16 @@
 #![plugin(peg_syntax_ext)]
 
 extern crate clap;
+#[macro_use]
+extern crate log;
+extern crate fern;
 
-#[cfg(test)]
-mod test;
 
 pub mod parser;
 pub mod vm;
 pub mod graphics;
 pub mod preprocessor;
+#[cfg(test)]mod test;
 
 use std::env;
 use std::fs::File;
@@ -39,6 +41,7 @@ fn main() {
             .possible_values(&["preprocessed", "parsed"]))
         .get_matches();
 
+    setup_logger(log::LogLevelFilter::Trace);
 
     let mut program = String::new();
     let current_pathbuf = env::current_dir().unwrap();
@@ -74,4 +77,29 @@ fn main() {
     // println!("{:?}", parsed_program);
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
+}
+
+
+fn setup_logger(log_level: log::LogLevelFilter) {
+    let logger_config = fern::DispatchConfig {
+        format: Box::new(|log: &str, level: &log::LogLevel, location: &log::LogLocation| {
+            let color_ansi = match *level {
+                log::LogLevel::Error => "[31m",// red
+                log::LogLevel::Warn => "[33m",// yellow
+                log::LogLevel::Info => "[32m",// green
+                log::LogLevel::Debug => "[34m",// blue
+                log::LogLevel::Trace => "[35m",// purple
+            };
+
+            format!("[{module}:L{line}] {escape}{color}{log}{escape}[0m",
+                    module = location.module_path(),
+                    line = location.line(),
+                    escape = 27 as char,
+                    color = color_ansi,
+                    log = log)
+        }),
+        output: vec![fern::OutputConfig::stdout()],
+        level: log::LogLevelFilter::Trace,
+    };
+    fern::init_global_logger(logger_config, log_level).unwrap();
 }
