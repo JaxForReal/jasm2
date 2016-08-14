@@ -1,6 +1,20 @@
 # Jasm2
 Compiled with `rustc 1.12.0-nightly (0ef24eed2 2016-08-10)`
 
+```
+USAGE:
+    jasm2 [OPTIONS] <filename>
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+OPTIONS:
+    -e, --emit <emit_type>          [values: preprocessed, parsed]
+    -l, --log-level <log_level>     [default: off]  [values: off, error, warn, info, debug, trace]
+    -s, --string <string>           Runs the string as a JASM file                 
+ARGS:
+    <filename>    The file to run.
+```
+
 # Documentation
 ## General
 An array of 2048 memory cells are provided for your program. Each cell is an unsigned 32 bit number. Commands are not comma separated, command separation is inferred. This allows the convienence of two commonly grouped commands on one line eg `1 -> 0 syscall setmode`. 
@@ -248,7 +262,6 @@ syscall render_graphics
 // wait for 2 seconds
 2000 -> 0 syscall delay
 ```
-<<<<<<< HEAD
 
 ## ToDo
 
@@ -279,5 +292,3 @@ syscall render_graphics
 - [ ] syscalls for input events
 - [x] ability to run in either console or graphics mode
 - [ ] convert all print_XXXX syscalls to a single print syscall
-=======
->>>>>>> a0c53a4d4f55043edb0d83551b272c54d24cb001
