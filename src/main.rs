@@ -71,7 +71,7 @@ fn main() {
         file_path
     };
 
-    program = preprocessor::preprocess(&program, file_path);
+    program = preprocessor::preprocess(&program, file_path.parent().unwrap());
 
     if matches.value_of("emit_type") == Some("preprocessed") {
         println!("{}", program);

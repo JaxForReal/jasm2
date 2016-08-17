@@ -214,9 +214,9 @@ Jasm includes a simple preprocessor that can define constants and include other 
 This searches through the program, and replaces every match of "CONST_NAME" with "value". NOTE: the entire program is searched, so constants before the `#define` are also replaced. 
   
 ```
-#include "/path/to/file.jasm"
+#include "path/to/file.jasm"
 ```
-Replaces this include text with the contents of file.jasm. Files are relative to the parent directory of the file being processed. For example if you are running `/home/me/main.jasm`, you can write `#include "/other.jasm"`, and `/home/me/other.jasm` will be included into the file.
+Replaces this include text with the contents of file.jasm. Files are relative to the parent directory of the file being processed. For example if you are running `/home/me/main.jasm`, you can write `#include "other.jasm"`, and `/home/me/other.jasm` will be included into the file.
 ### Example
 ```
 add PIN_NUMBER 1 -> 0

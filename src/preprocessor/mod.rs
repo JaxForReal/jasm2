@@ -1,52 +1,40 @@
 extern crate regex;
 use self::regex::Regex;
+use self::regex::Captures;
 use std::path::Path;
 use std::io::Read;
 use std::fs::File;
 
-// program_path is the full path of program that is being processed
+// containing_path is the full path of program that is being processed
 // including the file itself, eg "/home/me/Documents/my_program.jasm"
-pub fn preprocess(program: &str, program_path: &Path) -> String {
-    let included = process_includes(program, program_path);
-    process_defines(&included)
+pub fn preprocess(program: &str, containing_path: &Path) -> String {
+    info!("Processing include statements");
+    let included = process_includes(program, containing_path);
+    // process_defines(&included)
+    included
 }
 
-// replaces `#include "/path/to/file.j"` with the contents of /path/to/file.j
+// replaces `#include "path/to/file.j"` with the contents of <project root>/path/to/file.j
 // the path is relative to the parent directory of the file being compiled
-fn process_includes(program: &str, program_path: &Path) -> String {
-    let include_regex = Regex::new(r#"#include\s+"(?P<filename>.+?)""#).unwrap();
-    let captures_iter = include_regex.captures_iter(program);
+fn process_includes(program: &str, containing_path: &Path) -> String {
+    let include_regex = Regex::new(r#"#include\s+"(?P<relative_path>.+?)""#).unwrap();
 
-    // accumulator for all changes to the program
-    let mut program = program.to_owned();
+    include_regex.replace_all(program, |captures: &Captures| {
 
-    for captures in captures_iter {
-        let (incl_start_pos, incl_end_pos) = captures.pos(0).unwrap();
+        let rel_path = captures.name("relative_path").unwrap();
+        trace!("found include, relative path: {:?}", rel_path);
+        let full_path = containing_path.join(rel_path);
+        trace!("full path: {:?}", full_path);
 
-        // remove the `#include "path"` from the program because it breaks the parser
-        program.drain(incl_start_pos..incl_end_pos);
-
-        let file_path_str = format!("{}{}",
-                                    program_path.parent().unwrap().to_str().unwrap(),
-                                    captures.name("filename").unwrap());
-        let file_path = Path::new(&file_path_str);
-
-        // recursivley import
-        let file_string = process_includes(&get_file_string(&file_path),
-                                           file_path);
-
-        // insert the included file to the middle of program
-        program = format!("{}{}{}",
-                          &program[..incl_start_pos],
-                          file_string,
-                          &program[incl_start_pos..]);
-    }
-
-    program
+        // recursivley process includes for the included file
+        process_includes(&get_contents(&full_path), full_path.parent().unwrap())
+    })
 }
 
 // gets the string contents of a file represented by file_path
-fn get_file_string(file_path: &Path) -> String {
+fn get_contents(file_path: &Path) -> String {
+    trace!("reading contents of file: {:?}", file_path);
+    
     let mut file = File::open(file_path)
         .expect(&format!("could not open included file: `{:?}`", file_path));
 
