@@ -280,12 +280,12 @@ syscall render_graphics
 - [ ] syscall for reading environment arguments
 - [x] gui syscalls (see below, doing graphics output instead)
 - [ ] Ability to package as exe (with interpreter included?)
-- [ ] different arrow syntax
+- [x] different arrow syntax (decided against)
 - [ ] New name to not conflict with JVM Bytecode Assembler
 - [x] ability to define constants, and other preprocessor directives
 - [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
 - [x] Ability to give a printStream to vm, so it can output to tests or stdout
-- [ ] Graceful panics when parsing fails
+- [ ] Graceful panics when parsing fails (sort of done)
 - [x] Graceful panics on vm error
 - [x] memory mapping for graphics output
 - [ ] memory mapping for mouse location, keys pressed, other SDL events
