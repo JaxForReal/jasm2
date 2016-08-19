@@ -5,6 +5,9 @@ use std::path::Path;
 use std::io::Read;
 use std::fs::File;
 
+#[cfg(test)]
+mod test;
+
 // containing_path is the full path of program that is being processed
 // including the file itself, eg "/home/me/Documents/my_program.jasm"
 pub fn preprocess(program: &str, containing_path: &Path) -> String {
