@@ -262,33 +262,3 @@ syscall render_graphics
 // wait for 2 seconds
 2000 -> 0 syscall delay
 ```
-
-## ToDo
-
-- [x] Branching Syntax
-- [x] How to handle nested functions and declarations?
-- [x] How to pass data to syscalls without hardcoded argument addresses?
-- [x] Retrieve data at non-32bit addresses, between cells (sort of done with bit operations)
-- [x] Consider using i32 instead of u32 for memory cells (decided against)
-- [x] Write tests for parser
-- [ ] Write tests for Vm
-- [x] Fix enumerate() not working when building function_table and data operations
-- [x] Remove need for semicolons at end of lines
-- [x] ASCII value types
-- [ ] New parser for a machine syntax that is easy to compile to (but less readable)
-- [x] imports or links to other jasm files
-- [ ] syscall for reading environment arguments
-- [x] gui syscalls (see below, doing graphics output instead)
-- [ ] Ability to package as exe (with interpreter included?)
-- [x] different arrow syntax (decided against)
-- [ ] New name to not conflict with JVM Bytecode Assembler
-- [x] ability to define constants, and other preprocessor directives
-- [ ] A stdlib written in jasm, for pushing and popping on a stack, and string printing options
-- [x] Ability to give a printStream to vm, so it can output to tests or stdout
-- [ ] Graceful panics when parsing fails (sort of done)
-- [x] Graceful panics on vm error
-- [x] memory mapping for graphics output
-- [ ] memory mapping for mouse location, keys pressed, other SDL events
-- [ ] syscalls for input events
-- [x] ability to run in either console or graphics mode
-- [ ] convert all print_XXXX syscalls to a single print syscall
