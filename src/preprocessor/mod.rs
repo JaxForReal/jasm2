@@ -8,10 +8,10 @@ use std::fs::File;
 // containing_path is the full path of program that is being processed
 // including the file itself, eg "/home/me/Documents/my_program.jasm"
 pub fn preprocess(program: &str, containing_path: &Path) -> String {
-    info!("Processing include statements");
+    info!("Preprocessing include statements");
     let included = process_includes(program, containing_path);
-    // process_defines(&included)
-    included
+    info!("Preprocessing define statementes");
+    process_defines(&included)
 }
 
 // replaces `#include "path/to/file.j"` with the contents of <project root>/path/to/file.j
@@ -34,7 +34,7 @@ fn process_includes(program: &str, containing_path: &Path) -> String {
 // gets the string contents of a file represented by file_path
 fn get_contents(file_path: &Path) -> String {
     trace!("reading contents of file: {:?}", file_path);
-    
+
     let mut file = File::open(file_path)
         .expect(&format!("could not open included file: `{:?}`", file_path));
 
@@ -56,6 +56,7 @@ fn process_defines(program: &str) -> String {
 
     let mut program = program.to_owned();
     for captures in captures_iter {
+        trace!("replacing define statement regex capture: {:?}", captures);
         program = program.replace(captures.name("find").unwrap(),
                                   captures.name("replace").unwrap());
     }

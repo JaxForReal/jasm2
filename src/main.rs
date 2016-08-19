@@ -71,6 +71,7 @@ fn main() {
         file_path
     };
 
+    info!("Starting preprocess stage");
     program = preprocessor::preprocess(&program, file_path.parent().unwrap());
 
     if matches.value_of("emit_type") == Some("preprocessed") {
@@ -78,6 +79,7 @@ fn main() {
         process::exit(0);
     }
 
+    info!("starting parsing stage");
     let parsed_program = match parser::try_parse(&program) {
         Ok(prog) => prog,
         Err(err) => panic!("Error parsing: {}", err),
@@ -89,7 +91,7 @@ fn main() {
         }
     }
 
-    // println!("{:?}", parsed_program);
+    info!("Starting run stage (VM)");
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
 }
@@ -102,8 +104,8 @@ fn setup_logger(log_level: log::LogLevelFilter) {
                 log::LogLevel::Error => "[31m",// red
                 log::LogLevel::Warn => "[33m",// yellow
                 log::LogLevel::Info => "[32m",// green
-                log::LogLevel::Debug => "[35m",// purple
-                log::LogLevel::Trace => "[34m",// blue
+                log::LogLevel::Debug => "[34m",// blue
+                log::LogLevel::Trace => "[35m",// purple
             };
 
             format!("[{module}:L{line}] {escape}{color}{log}{escape}[0m",

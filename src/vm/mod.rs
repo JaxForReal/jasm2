@@ -60,11 +60,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // executes the program, writing all output to the `out` object
     pub fn exec(&mut self) {
+        info!("building label table");
         self.build_label_table();
 
         while self.instruction_pointer < self.prog.len() {
             let next_command = &self.prog[self.instruction_pointer];
-            info!("executing command (index {}): {:?}",
+            debug!("executing command (index {}): {:?}",
                   self.instruction_pointer,
                   next_command);
             if !self.exec_single_command(next_command) {
@@ -115,8 +116,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
 
     fn build_label_table(&mut self) {
-        trace!("Building label table");
-
         for (index, command) in self.prog.iter().enumerate() {
             if let Command::Label(name) = *command {
                 trace!("found label: '{}' at command index: {}", name, index);
