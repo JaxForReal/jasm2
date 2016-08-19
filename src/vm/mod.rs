@@ -1,4 +1,4 @@
-use super::parser::{Command, Value};
+use super::parser::syntax::{Command, Value};
 use std::collections::HashMap;
 use std::io::Write;
 use std::ops;

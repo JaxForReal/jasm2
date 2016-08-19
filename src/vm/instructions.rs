@@ -1,6 +1,7 @@
 use super::Vm;
-use parser::Value;
-use parser::Command;
+use parser::syntax::Value;
+use parser::syntax::Command;
+use parser::syntax::Command::*;
 use std::io::Write;
 
 // here the actual operations of the vm are implemented
@@ -9,20 +10,20 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     pub fn exec_single_command(&mut self, command: &Command) -> bool {
         match *command {
             // TODO macro for this pattern?
-            Command::Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
-            Command::Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a - b),
-            Command::Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
-            Command::Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a / b),
+            Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
+            Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a - b),
+            Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
+            Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a / b),
 
-            Command::LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
-            Command::RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
+            LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
+            RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
 
-            Command::And(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a & b),
-            Command::Or(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a | b),
-            Command::Xor(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a ^ b),
+            And(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a & b),
+            Or(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a | b),
+            Xor(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a ^ b),
 
             // See README.md for documentation on the compare command
-            Command::Compare(ref l, ref r, ref d) => {
+            Compare(ref l, ref r, ref d) => {
                 self.auto_binary_op(l, r, d, |a, b| {
                     let mut ret = 0;
                     if a == b {
@@ -53,10 +54,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 })
             }
 
-            Command::Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
-            Command::ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
+            Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
+            ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
 
-            Command::Data(ref values, ref d) => {
+            Data(ref values, ref d) => {
                 let dest = self.get_value(d) as usize;
 
                 for (index, value) in values.iter().enumerate() {
@@ -65,7 +66,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 }
             }
 
-            Command::Call(name) => {
+            Call(name) => {
                 trace!("calling function: {}", name);
                 // save our current place in program so we can return from call
                 self.call_stack.push(self.instruction_pointer);
@@ -73,7 +74,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.instruction_pointer = self.label_table[name];
             }
 
-            Command::Ret => {
+            Ret => {
                 let prev_position_maybe = self.call_stack.pop();
 
                 if let Some(prev_position) = prev_position_maybe {
@@ -87,14 +88,14 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 }
             }
 
-            Command::JumpZero(ref a, name) => {
+            JumpZero(ref a, name) => {
                 if self.get_value(a) == 0 {
                     trace!("jumpzero with 0 value, jumping to: {}", name);
                     // jump to label defined by name
                     self.instruction_pointer = self.label_table[name]
                 }
             }
-            Command::JumpNotZero(ref a, name) => {
+            JumpNotZero(ref a, name) => {
                 if self.get_value(a) != 0 {
                     trace!("jumpnotzero with nonzero value, jumping to: {}", name);
                     // jump to label defined by name
@@ -103,10 +104,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             }
 
             // see self::syscalls module
-            Command::SysCall(name) => self.syscall(name),
+            SysCall(name) => self.syscall(name),
 
             // ignore labels
-            Command::Label(_) => {}
+            Label(_) => {}
         }
         // default return true to continue execution
         true

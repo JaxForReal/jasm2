@@ -1,4 +1,4 @@
-use super::{Command, Value};
+use super::syntax::{Command, Value};
 
 #[export]
 program -> Vec<Command<'input>>
