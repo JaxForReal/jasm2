@@ -8,17 +8,17 @@ line_sep = __
 
 #[export]
 command -> Command<'input>
-    = binary_ops
+    =data
+    / binary_ops
     / ret
     / unary_ops
     / label
     / jump
     / string_commands
-    / data
     / valueof
 
 binary_ops -> Command<'input>
-    = __ command:identifier __ l:value __ r:value __ arrow __ dest:value __
+    = command:identifier __ l:value __ r:value __ arrow __ dest:value
     {
         match command {
             "add" => Command::Add(l, r, dest),
@@ -31,56 +31,56 @@ binary_ops -> Command<'input>
             "leftshift" => Command::LeftShift(l, r, dest),
             "rightshift" => Command::RightShift(l, r, dest),
             "compare" => Command::Compare(l, r, dest),
-            _ => panic!("unidentified command")
+            _ => panic!("unidentified binary operation command: {}", match_str)
         }
     }
 
 //use match here so it is easy to add unary ops
 unary_ops -> Command<'input>
-    = __ command:identifier __ arg:value __ arrow __ dest:value __
+    = command:identifier __ arg:value __ arrow __ dest:value
     {
         match command {
             "invert" => Command::Invert(arg, dest),
-            _ => panic!("unidentified command")
+            _ => panic!("unidentified unary operation command: {}", match_str)
         }
     }
 
 arrow = "->"
 
 string_commands -> Command<'input>
-    = __ command:identifier __ string:identifier __
+    = command:identifier __ string:identifier
     {
         match command {
             "call" => Command::Call(string),
             "syscall" => Command::SysCall(string),
-            _ => panic!("Unidentified string command: {:?}", command)
+            _ => panic!("Unidentified string command: {}", command)
         }
     }
     
 //<label_name>;
 label -> Command<'input>
-    = __ "<" name:identifier ">" __ { Command::Label(name) }
+    = "<" name:identifier ">" { Command::Label(name) }
 
 ret -> Command<'input>
-    = __ "ret" __ { Command::Ret }
+    = "ret" { Command::Ret }
 
 jump -> Command<'input>
-    = __ command:identifier __ val:value __ label:identifier __
+    = command:identifier __ val:value __ label:identifier
     {
         match command {
             "jumpzero" => Command::JumpZero(val, label),
             "jumpnotzero" => Command::JumpNotZero(val, label),
-            _ => panic!("unrecognised jump command")
+            _ => panic!("unidentified jump command: `{}`", match_str)
         }
     }
 
 valueof -> Command<'input>
-    = __ val:value __ arrow __ dest:value __ { Command::ValueOf(val, dest) }
+    = val:value __ arrow __ dest:value { Command::ValueOf(val, dest) }
 
 data -> Command<'input>
-    = __ "data" __ values:(value ++ __) __ arrow __ dest:value __ { Command::Data(values, dest) }
+    = "data" __ values:(value ++ __) __ arrow __ dest:value { Command::Data(values, dest) }
     //a string, where each character is added in a new memory cell, surround with quotes, not zero terminated
-    / __ "data" __ "`" characters:(data_string_char+) "`" __ arrow __ dest:value __ { Command::Data(characters, dest) }
+    / "data" __ "`" characters:(data_string_char+) "`" __ arrow __ dest:value { Command::Data(characters, dest) }
 
 data_string_char -> Value
     = !"`" . { Value::U32(match_str.chars().nth(0).unwrap() as u32) }
