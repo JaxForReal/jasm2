@@ -1,6 +1,5 @@
 use super::peg;
-use super::Value;
-use super::Command;
+use super::syntax::{Value, Command};
 
 #[test]
 fn peg_values_literals() {

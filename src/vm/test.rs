@@ -1,6 +1,6 @@
 use super::Vm;
-use parser::Command::*;
-use parser::Value::*;
+use parser::syntax::Command::*;
+use parser::syntax::Value::*;
 use std::str;
 use std::io;
 
