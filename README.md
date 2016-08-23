@@ -86,7 +86,14 @@ call func_name
 <_label_name>
 //commands
 ```
-Labels are defined in the same way as functions, but you should prepend label names with an underscore to differentiate them from functions. Jumping to labels is done with the `jumpzero value label` and`jumpnotzero value label` commands. There is no unconditional jumping, instead use `jumpzero 0 label`.
+Labels are defined in the same way as functions, but you should prepend label names with an underscore to differentiate them from functions. Jumping to labels is done with the following commands:
+
+- `jump equal value value label`
+- `jump notequal value value label`
+- `jump less value value label`
+- `jump greater value value label`
+
+They jump based on the comparison of the two parameters (==, !=, >, and < respectivley).
 
 ## Compare Operator
 Compares two values and returns a flags.
@@ -98,29 +105,6 @@ compare value value -> value
 ### Example
 ```
 compare @5 56 -> 6
-```
-
-Compare can also be used in conjuntion with `jumpnotzero` to jump based on the relation between two values.
-```
-<start>
-//start with these values
-25 -> 0
-27 -> 1
-
-//compare and store the flags to cell #3
-compare @0 @1 -> 3
-//use a bit AND mask to isolate the "less than" flag
-and @3 b00000100 -> 3
-jumpnotzero @3 _comparison_was_true
-<_comparison_was_false>
-//do stuff
-
-<_resume_exec>
-ret
-
-<_comparison_was_true>
-//do stuff
-jumpzero 0 _resume_exec
 ```
 
 ### compare flags
@@ -233,7 +217,7 @@ Draw diagonal lines on screen
 ```
 // this is the mask the separates out the
 // "less than" flag from the compare result
-\#define LESS_THAN b100
+#define LESS_THAN b100
 
 //put into graphics mode
 1 -> 0 syscall set_mode
@@ -252,9 +236,7 @@ add 3 @1 -> 1
 
 // compare to 1400, see is it is less than
 // if so, jump to start of loop
-compare @1 1400 -> 0
-and @0 LESS_THAN -> 0
-jumpnotzero @0 _loop_start
+jump less @1 1400 _loop_start
 
 // render the graphics
 syscall render_graphics

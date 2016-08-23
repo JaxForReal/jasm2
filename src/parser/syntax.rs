@@ -36,9 +36,10 @@ pub enum Command<'a> {
 
     SysCall(&'a str),
 
-    // JumpConditional(val_to_test, label)
-    JumpZero(Value, &'a str),
-    JumpNotZero(Value, &'a str),
+    JumpEqual(Value, Value, &'a str),
+    JumpNotEqual(Value, Value, &'a str),
+    JumpGreater(Value, Value, &'a str),
+    JumpLess(Value, Value, &'a str),
 
     Ret,
 }

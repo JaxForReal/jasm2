@@ -65,11 +65,13 @@ ret -> Command<'input>
     = "ret" { Command::Ret }
 
 jump -> Command<'input>
-    = command:identifier __ val:value __ label:identifier
+    = "jump" __ jumptype:identifier __ l:value __ r:value __ label:identifier
     {
-        match command {
-            "jumpzero" => Command::JumpZero(val, label),
-            "jumpnotzero" => Command::JumpNotZero(val, label),
+        match jumptype {
+            "equal" => Command::JumpEqual(l, r, label),
+            "notequal" => Command::JumpNotEqual(l, r, label),
+            "greater" => Command::JumpGreater(l, r, label),
+            "less" => Command::JumpLess(l, r, label),
             _ => panic!("unidentified jump command: `{}`", match_str)
         }
     }

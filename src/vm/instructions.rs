@@ -88,18 +88,25 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 }
             }
 
-            JumpZero(ref a, name) => {
-                if self.get_value(a) == 0 {
-                    trace!("jumpzero with 0 value, jumping to: {}", name);
-                    // jump to label defined by name
-                    self.instruction_pointer = self.label_table[name]
+            // TODO get rid of repetition
+            JumpEqual(ref a, ref b, label) => {
+                if self.get_value(a) == self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
                 }
             }
-            JumpNotZero(ref a, name) => {
-                if self.get_value(a) != 0 {
-                    trace!("jumpnotzero with nonzero value, jumping to: {}", name);
-                    // jump to label defined by name
-                    self.instruction_pointer = self.label_table[name]
+            JumpNotEqual(ref a, ref b, label) => {
+                if self.get_value(a) != self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+            JumpLess(ref a, ref b, label) => {
+                if self.get_value(a) < self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+            JumpGreater(ref a, ref b, label) => {
+                if self.get_value(a) > self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
                 }
             }
 
