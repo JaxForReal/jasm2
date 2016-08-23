@@ -4,6 +4,8 @@ pub enum Value {
     Address(Box<Value>),
 }
 
+type Label<'a> = &'a str;
+
 #[derive(Debug, PartialEq)]
 pub enum Command<'a> {
     // BinaryOp(arg1, arg2, destination)
@@ -29,17 +31,17 @@ pub enum Command<'a> {
 
     // execute function
     // Call(name)
-    Call(&'a str),
+    Call(Label<'a>),
 
     // defines a label at this point in code
-    Label(&'a str),
+    Label(Label<'a>),
 
-    SysCall(&'a str),
+    SysCall(Label<'a>),
 
-    JumpEqual(Value, Value, &'a str),
-    JumpNotEqual(Value, Value, &'a str),
-    JumpGreater(Value, Value, &'a str),
-    JumpLess(Value, Value, &'a str),
+    JumpEqual(Value, Value, Label<'a>),
+    JumpNotEqual(Value, Value, Label<'a>),
+    JumpGreater(Value, Value, Label<'a>),
+    JumpLess(Value, Value, Label<'a>),
 
     Ret,
 }
