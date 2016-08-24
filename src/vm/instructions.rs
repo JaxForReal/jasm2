@@ -9,7 +9,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // returns whether or not execution should ocntinue after this command;
     pub fn exec_single_command(&mut self, command: &Command) -> bool {
         match *command {
-            // TODO macro for this pattern?
             Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
             Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a - b),
             Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
@@ -88,7 +87,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 }
             }
 
-            // TODO get rid of repetition
             JumpEqual(ref a, ref b, label) => {
                 if self.get_value(a) == self.get_value(b) {
                     self.instruction_pointer = self.label_table[label]
@@ -123,7 +121,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // performs a binary operation based on a simple fn(u32, u32) -> u32 closure
     // given left, right, and destination vals from parser
-    // TODO is it better to use dynamic or static dispatch here for closure?
     // currently using static
     fn auto_binary_op<TFunc>(&mut self,
                              left: &Value,
