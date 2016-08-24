@@ -9,9 +9,11 @@ extern crate fern;
 
 pub mod parser;
 pub mod vm;
+#[cfg(feature = "graphics")]
 pub mod graphics;
 pub mod preprocessor;
-#[cfg(test)]mod test;
+#[cfg(test)]
+mod test;
 
 use std::env;
 use std::fs::File;

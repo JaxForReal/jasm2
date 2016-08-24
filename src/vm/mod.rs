@@ -1,9 +1,11 @@
 use super::parser::syntax::{Command, Value};
 use std::collections::HashMap;
 use std::io::Write;
+#[cfg(feature = "graphics")]
 use std::ops;
 use std::process;
 
+#[cfg(feature = "graphics")]
 use graphics;
 
 mod syscalls;
@@ -15,8 +17,10 @@ mod test;
 const RAM_SIZE: usize = 2048;
 
 // the range in memory where the graphics output will be mapped
+#[cfg(feature = "graphics")]
 static GRAPHICS_LOCATION: ops::Range<usize> = 1000..1400;
 
+#[cfg(feature = "graphics")]
 pub struct Vm<'a, TOut: Write> {
     // vector of commands, executed sequentially
     prog: &'a [Command<'a>],
@@ -43,7 +47,19 @@ pub struct Vm<'a, TOut: Write> {
     is_graphics_mode: bool,
 }
 
+// this version does not include graphics struct members, for compiling without sdl
+#[cfg(not(feature = "graphics"))]
+pub struct Vm<'a, TOut: Write> {
+    prog: &'a [Command<'a>],
+    output: TOut,
+    ram: Vec<u32>,
+    call_stack: Vec<usize>,
+    instruction_pointer: usize,
+    label_table: HashMap<&'a str, usize>,
+}
+
 impl<'a, TOut: Write> Vm<'a, TOut> {
+    #[cfg(feature = "graphics")]
     pub fn new(new_prog: &'a [Command], out: TOut) -> Vm<'a, TOut> {
         Vm {
             prog: new_prog,
@@ -58,6 +74,17 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         }
     }
 
+    #[cfg(not(feature = "graphics"))]
+    pub fn new(new_prog: &'a [Command], out: TOut) -> Vm<'a, TOut> {
+        Vm {
+            prog: new_prog,
+            output: out,
+            ram: vec![0; RAM_SIZE],
+            call_stack: Vec::new(),
+            instruction_pointer: 0,
+            label_table: HashMap::new(),
+        }
+    }
     // executes the program, writing all output to the `out` object
     pub fn exec(&mut self) {
         info!("building label table");
@@ -66,8 +93,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         while self.instruction_pointer < self.prog.len() {
             let next_command = &self.prog[self.instruction_pointer];
             debug!("executing command (index {}): {:?}",
-                  self.instruction_pointer,
-                  next_command);
+                   self.instruction_pointer,
+                   next_command);
             if !self.exec_single_command(next_command) {
                 return;
             }
@@ -95,6 +122,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.ram[index]
     }
 
+    #[cfg(feature = "graphics")]
     fn set_ram(&mut self, index: usize, value: u32) {
         trace!("setting ram index {} to {}", index, value);
         self.ram[index] = value;
@@ -113,6 +141,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             }
         }
 
+    }
+
+    #[cfg(not(feature = "graphics"))]
+    fn set_ram(&mut self, index: usize, value: u32) {
+        trace!("setting ram index {} to {}", index, value);
+        self.ram[index] = value;
     }
 
     fn build_label_table(&mut self) {

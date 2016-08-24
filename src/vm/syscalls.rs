@@ -2,6 +2,7 @@ use super::Vm;
 use std::io::{self, Write};
 use std::thread;
 use std::time;
+#[cfg(feature = "graphics")]
 use graphics;
 
 // implement all syscalls of the Vm
@@ -90,11 +91,17 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
 
     // render graphics to screen
+    #[cfg(feature = "graphics")]
     fn render_graphics(&mut self) {
         match self.sdl {
             Some(ref mut inner_sdl) => inner_sdl.render(),
             None => self.error("Tried to render when Sdl was not initialized."),
         }
+    }
+    #[cfg(not(feature = "graphics"))]
+    fn render_graphics(&mut self) {
+        self.error("Graphics is not enabled in this installation, compile with `--features \
+                    \"graphics\"` to enable");
     }
 
     // delay for @0 milliseconds
@@ -106,6 +113,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // sets the mode based on @0
     // 0 = console
     // anything else = graphics
+    #[cfg(feature = "graphics")]
     fn set_mode(&mut self) {
         if self.get_ram(0) == 0 {
             trace!("turning off graphics mode");
@@ -117,5 +125,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             self.is_graphics_mode = true;
             self.sdl = Some(graphics::MySdl::new());
         }
+    }
+
+    #[cfg(not(feature = "graphics"))]
+    fn set_mode(&mut self) {
+        self.error("Graphics is not enabled in this installation, compile with `--features \
+                    \"graphics\"` to enable");
     }
 }
