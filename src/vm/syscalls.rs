@@ -7,6 +7,7 @@ use graphics;
 
 // implement all syscalls of the Vm
 impl<'a, TOut: Write> Vm<'a, TOut> {
+    #[cfg(feature = "graphics")]
     pub fn syscall(&mut self, name: &str) {
         match name {
             "print" => self.print(),
@@ -18,6 +19,21 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             "render_graphics" => self.render_graphics(),
             "delay" => self.delay(),
             "set_mode" => self.set_mode(),
+            _ => self.error(&format!("unknown syscall: {}", name)),
+        }
+    }
+
+    // this version of the function does not include graphics dependent syscalls
+    #[cfg(not(feature = "graphics"))]
+    pub fn syscall(&mut self, name: &str) {
+        match name {
+            "print" => self.print(),
+            "print_char" => self.print_char(),
+            "print_binary" => self.print_binary(),
+            "read" => self.read(),
+            "read_string" => self.read_string(),
+            "read_char" => self.read_char(),
+            "delay" => self.delay(),
             _ => self.error(&format!("unknown syscall: {}", name)),
         }
     }
@@ -98,11 +114,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             None => self.error("Tried to render when Sdl was not initialized."),
         }
     }
-    #[cfg(not(feature = "graphics"))]
-    fn render_graphics(&mut self) {
-        self.error("Graphics is not enabled in this installation, compile with `--features \
-                    \"graphics\"` to enable");
-    }
 
     // delay for @0 milliseconds
     fn delay(&mut self) {
@@ -125,11 +136,5 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             self.is_graphics_mode = true;
             self.sdl = Some(graphics::MySdl::new());
         }
-    }
-
-    #[cfg(not(feature = "graphics"))]
-    fn set_mode(&mut self) {
-        self.error("Graphics is not enabled in this installation, compile with `--features \
-                    \"graphics\"` to enable");
     }
 }

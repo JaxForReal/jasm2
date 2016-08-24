@@ -47,7 +47,7 @@ pub struct Vm<'a, TOut: Write> {
     is_graphics_mode: bool,
 }
 
-// this version does not include graphics struct members, for compiling without sdl
+// this version does not include graphics struct members, for compiling without "graphics" feature
 #[cfg(not(feature = "graphics"))]
 pub struct Vm<'a, TOut: Write> {
     prog: &'a [Command<'a>],
@@ -122,11 +122,16 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.ram[index]
     }
 
-    #[cfg(feature = "graphics")]
     fn set_ram(&mut self, index: usize, value: u32) {
         trace!("setting ram index {} to {}", index, value);
         self.ram[index] = value;
+        self.copy_ram_to_graphics_buffer(index, value);
+    }
 
+    // this function extracts the conditionally compiled code to its own function
+    // so #cfg[] can be used
+    #[cfg(feature = "graphics")]
+    fn copy_ram_to_graphics_buffer(&mut self, index: usize, value: u32) {
         // only map memory to screen if in graphics mode
         if self.is_graphics_mode {
             let new_sdl = match self.sdl {
@@ -140,14 +145,11 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 new_sdl.screen_buffer[index - GRAPHICS_LOCATION.start] = value != 0;
             }
         }
-
     }
 
     #[cfg(not(feature = "graphics"))]
-    fn set_ram(&mut self, index: usize, value: u32) {
-        trace!("setting ram index {} to {}", index, value);
-        self.ram[index] = value;
-    }
+    #[allow(unused_variables)]
+    fn copy_ram_to_graphics_buffer(&mut self, index: usize, value: u32) {}
 
     fn build_label_table(&mut self) {
         for (index, command) in self.prog.iter().enumerate() {
