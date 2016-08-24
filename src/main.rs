@@ -47,7 +47,7 @@ fn main() {
             .long("log-level")
             .takes_value(true)
             .possible_values(&["off", "error", "warn", "info", "debug", "trace"])
-            .default_value("off"))
+            .default_value("info"))
         .get_matches();
 
     setup_logger(match matches.value_of("log_level").unwrap() {
@@ -101,21 +101,20 @@ fn main() {
 
 fn setup_logger(log_level: log::LogLevelFilter) {
     let logger_config = fern::DispatchConfig {
-        format: Box::new(|log: &str, level: &log::LogLevel, location: &log::LogLocation| {
+        format: Box::new(|log: &str, level: &log::LogLevel, _: &log::LogLocation| {
             let color_ansi = match *level {
-                log::LogLevel::Error => "[31m",// red
-                log::LogLevel::Warn => "[33m",// yellow
-                log::LogLevel::Info => "[32m",// green
-                log::LogLevel::Debug => "[34m",// blue
-                log::LogLevel::Trace => "[35m",// purple
+                log::LogLevel::Error => "31",// red
+                log::LogLevel::Warn => "33",// yellow
+                log::LogLevel::Info => "32",// green
+                log::LogLevel::Debug => "34",// blue
+                log::LogLevel::Trace => "35",// purple
             };
 
-            format!("[{module}:L{line}] {escape}{color}{log}{escape}[0m",
-                    module = location.module_path(),
-                    line = location.line(),
+            format!("{escape}[{color};1m{log_level}{escape}[0m {log}",
                     escape = 27 as char,
                     color = color_ansi,
-                    log = log)
+                    log = log,
+                    log_level = level)
         }),
         output: vec![fern::OutputConfig::stdout()],
         level: log::LogLevelFilter::Trace,
