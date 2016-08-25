@@ -9,7 +9,7 @@ FLAGS:
     -V, --version    Prints version information
 OPTIONS:
     -e, --emit <emit_type>          [values: preprocessed, parsed]
-    -l, --log-level <log_level>     [default: off]  [values: off, error, warn, info, debug, trace]
+    -l, --log-level <log_level>     [default: info]  [values: off, error, warn, info, debug, trace]
     -s, --string <string>           Runs the string as a JASM file                 
 ARGS:
     <filename>    The file to run.
