@@ -4,6 +4,8 @@ use parser::syntax::Command;
 use parser::syntax::Command::*;
 use std::io::Write;
 
+use super::STACK_POINTER_ADDRESS;
+
 // here the actual operations of the vm are implemented
 impl<'a, TOut: Write> Vm<'a, TOut> {
     // returns whether or not execution should ocntinue after this command;
@@ -54,6 +56,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             }
 
             Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
+
             ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
 
             Data(ref values, ref d) => {
@@ -73,6 +76,65 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.instruction_pointer = self.label_table[name];
             }
 
+            JumpEqual(ref a, ref b, label) => {
+                if self.get_value(a) == self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+
+            JumpNotEqual(ref a, ref b, label) => {
+                if self.get_value(a) != self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+
+            JumpLess(ref a, ref b, label) => {
+                if self.get_value(a) < self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+
+            JumpGreater(ref a, ref b, label) => {
+                if self.get_value(a) > self.get_value(b) {
+                    self.instruction_pointer = self.label_table[label]
+                }
+            }
+
+            Push(ref val) => {
+                let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
+                
+                if(stack_pointer <= super::STACK_POINTER_ADDRESS) {
+                    self.error("attempted to push onto a full stack");
+                }
+
+                // add value onto the stack
+                let resolved_value = self.get_value(val);
+                self.set_ram(stack_pointer as usize, resolved_value);
+                // decrement the pointer
+                self.set_ram(STACK_POINTER_ADDRESS, (stack_pointer - 1) as u32);
+            }
+
+            Pop(ref dest) => {
+                let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
+
+                if stack_pointer >= super::RAM_SIZE - 1 {
+                    self.error("attempted to pop when the stack was empty");
+                }
+
+                let new_sp = stack_pointer + 1;
+                self.set_ram(STACK_POINTER_ADDRESS, new_sp);
+
+                let resolved_dest = self.get_value(dest);
+                let top_of_stack_value = self.get_ram(new_sp as usize);
+                self.set_ram(resolved_dest as usize, top_of_stack_value);
+            }
+
+            // see self::syscalls module
+            SysCall(name) => self.syscall(name),
+
+            // ignore labels
+            Label(_) => {}
+
             Ret => {
                 let prev_position_maybe = self.call_stack.pop();
 
@@ -86,33 +148,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                     return false;
                 }
             }
-
-            JumpEqual(ref a, ref b, label) => {
-                if self.get_value(a) == self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-            JumpNotEqual(ref a, ref b, label) => {
-                if self.get_value(a) != self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-            JumpLess(ref a, ref b, label) => {
-                if self.get_value(a) < self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-            JumpGreater(ref a, ref b, label) => {
-                if self.get_value(a) > self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-
-            // see self::syscalls module
-            SysCall(name) => self.syscall(name),
-
-            // ignore labels
-            Label(_) => {}
         }
         // default return true to continue execution
         true

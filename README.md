@@ -72,6 +72,10 @@ Least significant end of value
 
 Most significant end of value
 
+## The stack
+The stack can be pushed and popped from using the `push value` command, and the `pop -> destination` command. The stack pointer is at location `2000`, and its initial value is `2999`. This means the first value pushed to the stack will be at address 2999, the next at 2998. Attempting to pop from an empty stack will trigger an error, as will attempting to push onto a full stack.  
+**Example**: `push 'a /*commands*/ pop -> 0 syscall print_char` will print `a` to the console
+
 ## Syscalls
 **Syntax**: `syscall name`
 

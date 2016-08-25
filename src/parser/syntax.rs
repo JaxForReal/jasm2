@@ -26,6 +26,10 @@ pub enum Command<'a> {
     Invert(Value, Value),
     ValueOf(Value, Value),
 
+    Push(Value),
+    // value = destination
+    Pop(Value),
+
     // Data(values, destination)
     Data(Vec<Value>, Value),
 

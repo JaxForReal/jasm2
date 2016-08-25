@@ -8,7 +8,7 @@ line_sep = __
 
 #[export]
 command -> Command<'input>
-    =data
+    = data
     / binary_ops
     / ret
     / unary_ops
@@ -16,6 +16,8 @@ command -> Command<'input>
     / jump
     / string_commands
     / valueof
+    / pop
+    / push
 
 binary_ops -> Command<'input>
     = command:identifier __ l:value __ r:value __ arrow __ dest:value
@@ -83,6 +85,12 @@ data -> Command<'input>
     = "data" __ values:(value ++ __) __ arrow __ dest:value { Command::Data(values, dest) }
     //a string, where each character is added in a new memory cell, surround with quotes, not zero terminated
     / "data" __ "`" characters:(data_string_char+) "`" __ arrow __ dest:value { Command::Data(characters, dest) }
+
+push -> Command<'input>
+    = "push" __ val:value { Command::Push(val) }
+
+pop -> Command<'input>
+    = "pop" __ arrow __ val:value { Command::Pop(val) }
 
 data_string_char -> Value
     = !"`" . { Value::U32(match_str.chars().nth(0).unwrap() as u32) }

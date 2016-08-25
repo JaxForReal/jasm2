@@ -14,7 +14,11 @@ mod instructions;
 mod test;
 
 // ram size in cells
-const RAM_SIZE: usize = 2048;
+const RAM_SIZE: usize = 3000;
+// the the address where the stack poniter is stored in memory
+const STACK_POINTER_ADDRESS: usize = 2000;
+// the initial stack pointer (points to cell 2999)
+const INITIAL_STACK_POINTER: u32 = 2999;
 
 // the range in memory where the graphics output will be mapped
 #[cfg(feature = "graphics")]
@@ -89,6 +93,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     pub fn exec(&mut self) {
         info!("building label table");
         self.build_label_table();
+
+        // make the sp point to initial stack address
+        self.set_ram(STACK_POINTER_ADDRESS, INITIAL_STACK_POINTER);
 
         while self.instruction_pointer < self.prog.len() {
             let next_command = &self.prog[self.instruction_pointer];
