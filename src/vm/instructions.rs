@@ -55,6 +55,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             Push(ref val) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
+                trace!("pushing value onto stack: {:?}, stack pointer: {}", val, stack_pointer);
 
                 if stack_pointer <= super::STACK_POINTER_ADDRESS as u32 {
                     self.error("attempted to push onto a full stack");
@@ -109,7 +110,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // performs a binary operation based on a simple fn(u32, u32) -> u32 closure
     // given left, right, and destination vals from parser
-    // currently using static
     fn auto_binary_op<TFunc>(&mut self,
                              left: &Value,
                              right: &Value,
@@ -117,12 +117,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                              operation: TFunc)
         where TFunc: Fn(u32, u32) -> u32
     {
-        let left_val = self.get_value(left);
-        let right_val = self.get_value(right);
         let dest_val = self.get_value(dest) as usize;
 
-        // perform closure operation on values
-        let result = operation(left_val, right_val);
+        let result = operation(self.get_value(left), self.get_value(right));
         self.set_ram(dest_val, result);
     }
 
@@ -130,13 +127,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     fn auto_unary_op<TFunc>(&mut self, arg: &Value, dest: &Value, operation: TFunc)
         where TFunc: Fn(u32) -> u32
     {
-        let arg_val = self.get_value(arg);
         let dest_val = self.get_value(dest) as usize;
-
-        let result = operation(arg_val);
+        let result = operation(self.get_value(arg));
         self.set_ram(dest_val, result);
     }
 
+    // closure is applied to l and r values, if it evals to true, jump to label
     fn auto_jump_op<TFunc>(&mut self, l: &Value, r: &Value, label: &str, operation: TFunc)
         where TFunc: Fn(u32, u32) -> bool
     {
