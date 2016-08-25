@@ -137,7 +137,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
         self.set_ram(dest_val, result);
     }
 
-    // closure is applied to l and r values, if it evals to true, jump to label
     fn auto_jump_op<TFunc>(&mut self, l: &Value, r: &Value, label: &str, operation: TFunc)
         where TFunc: Fn(u32, u32) -> bool
     {
