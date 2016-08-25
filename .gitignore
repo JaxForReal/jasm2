@@ -68,3 +68,6 @@ target
 
 #cargo fmt backups
 *.bk
+
+#intellij
+/.idea/
