@@ -44,6 +44,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.instruction_pointer = self.label_table[name];
             }
 
+            JumpAlways(label) => {
+                self.instruction_pointer = self.label_table[label];
+            }
+
             JumpEqual(ref a, ref b, label) => {
                 if self.get_value(a) == self.get_value(b) {
                     self.instruction_pointer = self.label_table[label]

@@ -55,7 +55,8 @@ Labels are defined in the same way as functions, but you should prepend label na
 - `jump less value value label`
 - `jump greater value value label`
 
-They jump based on the comparison of the two parameters (`==`, `!=`, `>`, and `<` respectivley).
+They jump based on the comparison of the two parameters (`==`, `!=`, `>`, and `<` respectivley).  
+`jump label` is also supported, for unconditional jumping
 
 ## The stack
 The stack can be pushed and popped from using the `push value` command, and the `pop -> destination` command. The stack pointer is at location `2000`, and its initial value is `2999`. This means the first value pushed to the stack will be at address 2999, the next at 2998. Attempting to pop from an empty stack will trigger an error, as will attempting to push onto a full stack.  

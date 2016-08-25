@@ -44,6 +44,7 @@ pub enum Command<'a> {
     JumpNotEqual(Value, Value, Label<'a>),
     JumpGreater(Value, Value, Label<'a>),
     JumpLess(Value, Value, Label<'a>),
+    JumpAlways(Label<'a>),
 
     Ret,
 }

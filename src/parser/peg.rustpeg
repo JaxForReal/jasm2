@@ -54,6 +54,7 @@ string_commands -> Command<'input>
         match command {
             "call" => Command::Call(string),
             "syscall" => Command::SysCall(string),
+            "jump" => Command::JumpAlways(string),
             _ => panic!("Unidentified string command: {}", command)
         }
     }
