@@ -48,29 +48,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 self.instruction_pointer = self.label_table[label];
             }
 
-            JumpEqual(ref a, ref b, label) => {
-                if self.get_value(a) == self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-
-            JumpNotEqual(ref a, ref b, label) => {
-                if self.get_value(a) != self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-
-            JumpLess(ref a, ref b, label) => {
-                if self.get_value(a) < self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
-
-            JumpGreater(ref a, ref b, label) => {
-                if self.get_value(a) > self.get_value(b) {
-                    self.instruction_pointer = self.label_table[label]
-                }
-            }
+            JumpEqual(ref a, ref b, label) => self.auto_jump_op(a, b, label, |a, b| a == b),
+            JumpNotEqual(ref a, ref b, label) => self.auto_jump_op(a, b, label, |a, b| a != b),
+            JumpLess(ref a, ref b, label) => self.auto_jump_op(a, b, label, |a, b| a < b),
+            JumpGreater(ref a, ref b, label) => self.auto_jump_op(a, b, label, |a, b| a > b),
 
             Push(ref val) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
@@ -154,5 +135,13 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
         let result = operation(arg_val);
         self.set_ram(dest_val, result);
+    }
+
+    fn auto_jump_op<TFunc>(&mut self, l: &Value, r: &Value, label: &str, operation: TFunc)
+        where TFunc: Fn(u32, u32) -> bool
+    {
+        if operation(self.get_value(l), self.get_value(r)) {
+            self.instruction_pointer = self.label_table[label];
+        }
     }
 }
