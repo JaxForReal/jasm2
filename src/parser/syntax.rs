@@ -20,8 +20,6 @@ pub enum Command<'a> {
     Or(Value, Value, Value),
     Xor(Value, Value, Value),
 
-    Compare(Value, Value, Value),
-
     // UnaryOp(arg, destination)
     Invert(Value, Value),
     ValueOf(Value, Value),

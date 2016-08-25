@@ -23,38 +23,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             Or(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a | b),
             Xor(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a ^ b),
 
-            // See README.md for documentation on the compare command
-            Compare(ref l, ref r, ref d) => {
-                self.auto_binary_op(l, r, d, |a, b| {
-                    let mut ret = 0;
-                    if a == b {
-                        trace!("compare equal found");
-                        ret |= 0b1;
-                    };
-                    if a != b {
-                        trace!("compare not equal found");
-                        ret |= 0b10;
-                    };
-                    if a < b {
-                        trace!("compare less than found");
-                        ret |= 0b100;
-                    };
-                    if a > b {
-                        trace!("compare greater than found");
-                        ret |= 0b1000;
-                    };
-                    if a <= b {
-                        trace!("compare less than or equal found");
-                        ret |= 0b10000;
-                    };
-                    if a >= b {
-                        trace!("compare greater than or equal found");
-                        ret |= 0b100000;
-                    };
-                    ret
-                })
-            }
-
             Invert(ref a, ref d) => self.auto_unary_op(a, d, |a| !a),
 
             ValueOf(ref a, ref d) => self.auto_unary_op(a, d, |a| a),
@@ -102,8 +70,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             Push(ref val) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
-                
-                if(stack_pointer <= super::STACK_POINTER_ADDRESS) {
+
+                if stack_pointer <= super::STACK_POINTER_ADDRESS as u32 {
                     self.error("attempted to push onto a full stack");
                 }
 
@@ -117,7 +85,7 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             Pop(ref dest) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
 
-                if stack_pointer >= super::RAM_SIZE - 1 {
+                if stack_pointer >= (super::RAM_SIZE - 1) as u32 {
                     self.error("attempted to pop when the stack was empty");
                 }
 

@@ -30,7 +30,7 @@ Unlimited levels of pointer indirection are supported. Ex `@@@@@23` is a valid v
 `'a` the utf-8 value of character 'a' (decimal 97).
 
 ## Binary Operators
-Currently implemented operators: `add`, `sub`, `mul`, `div`, `and`, `or`, `xor`, `leftshift`, `rightshift`, `compare`  
+Currently implemented operators: `add`, `sub`, `mul`, `div`, `and`, `or`, `xor`, `leftshift`, `rightshift`  
 **Syntax**: `operator value value -> value`  
 NOTE: the destination (after the arrow) is a memory address. So to store a result to memory cell #3, you would write `add 4 5 -> 3`. To store in the cell that cell 4 points to, use `add 4 5 -> @4`. This is a bit counterintuitive, but makes the language more uniform, because values are accepted anywhere in syntax.
 
@@ -56,21 +56,6 @@ Labels are defined in the same way as functions, but you should prepend label na
 - `jump greater value value label`
 
 They jump based on the comparison of the two parameters (`==`, `!=`, `>`, and `<` respectivley).
-
-## Compare Operator
-Compares two values and returns a flags.  
-**Syntax**: `compare value value -> value`  
-**Example**: `compare @5 56 -> 6`  
-**Compare flags**:  
-Least significant end of value
-* 0: equal
-* 1: not equal
-* 2: less than
-* 3: greater than 
-* 4: less than or equal
-* 5: greater than or equal  
-
-Most significant end of value
 
 ## The stack
 The stack can be pushed and popped from using the `push value` command, and the `pop -> destination` command. The stack pointer is at location `2000`, and its initial value is `2999`. This means the first value pushed to the stack will be at address 2999, the next at 2998. Attempting to pop from an empty stack will trigger an error, as will attempting to push onto a full stack.  
