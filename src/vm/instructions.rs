@@ -55,7 +55,9 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             Push(ref val) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
-                trace!("pushing value onto stack: {:?}, stack pointer: {}", val, stack_pointer);
+                trace!("pushing value onto stack: {:?}, stack pointer: {}",
+                       val,
+                       stack_pointer);
 
                 if stack_pointer <= super::STACK_POINTER_ADDRESS as u32 {
                     self.error("attempted to push onto a full stack");
@@ -81,6 +83,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
                 let resolved_dest = self.get_value(dest);
                 let top_of_stack_value = self.get_ram(new_sp as usize);
                 self.set_ram(resolved_dest as usize, top_of_stack_value);
+
+                trace!("popping value: {} from stack into address: {}",
+                       top_of_stack_value,
+                       resolved_dest);
             }
 
             // see self::syscalls module

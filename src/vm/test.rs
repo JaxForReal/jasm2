@@ -49,5 +49,6 @@ fn data_command() {
     let prog = &[Data(vec![U32(123), U32(456), U32(789)], U32(0))];
     let mut vm = Vm::new(prog, io::sink());
     vm.exec();
-    assert_eq!((123, 456, 789), (vm.get_ram(0), vm.get_ram(1), vm.get_ram(2)));
+    assert_eq!((123, 456, 789),
+               (vm.get_ram(0), vm.get_ram(1), vm.get_ram(2)));
 }
