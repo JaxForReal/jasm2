@@ -9,6 +9,7 @@ line_sep = __
 #[export]
 command -> Command<'input>
     = data
+	/ push //must come before binary_ops because `push value value -> dest` is ambigous
     / binary_ops
     / ret
     / unary_ops
@@ -17,7 +18,6 @@ command -> Command<'input>
     / string_commands
     / valueof
     / pop
-    / push
 
 binary_ops -> Command<'input>
     = command:identifier __ l:value __ r:value __ arrow __ dest:value
