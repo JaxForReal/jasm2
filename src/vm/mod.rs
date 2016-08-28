@@ -17,8 +17,8 @@ mod test;
 const RAM_SIZE: usize = 3000;
 // the the address where the stack poniter is stored in memory
 const STACK_POINTER_ADDRESS: usize = 2000;
-// the initial stack pointer (points to cell 2999)
-const INITIAL_STACK_POINTER: u32 = 2999;
+// the initial stack pointer points to the end of ram
+const INITIAL_STACK_POINTER: u32 = RAM_SIZE as u32;
 
 // the range in memory where the graphics output will be mapped
 #[cfg(feature = "graphics")]

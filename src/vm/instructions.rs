@@ -55,38 +55,41 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
             Push(ref val) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
+                self.set_ram(STACK_POINTER_ADDRESS, (stack_pointer - 1) as u32);
+
+                let new_sp = stack_pointer - 1;
+
                 trace!("pushing value onto stack: {:?}, stack pointer: {}",
                        val,
                        stack_pointer);
 
-                if stack_pointer <= super::STACK_POINTER_ADDRESS as u32 {
+                if new_sp <= super::STACK_POINTER_ADDRESS as u32 {
                     self.error("attempted to push onto a full stack");
                 }
 
                 // add value onto the stack
                 let resolved_value = self.get_value(val);
-                self.set_ram(stack_pointer as usize, resolved_value);
-                // decrement the pointer
-                self.set_ram(STACK_POINTER_ADDRESS, (stack_pointer - 1) as u32);
+                self.set_ram(new_sp as usize, resolved_value);
             }
 
             Pop(ref dest) => {
                 let stack_pointer = self.get_ram(STACK_POINTER_ADDRESS);
 
-                if stack_pointer >= (super::RAM_SIZE - 1) as u32 {
+                if stack_pointer > (super::RAM_SIZE - 1) as u32 {
                     self.error("attempted to pop when the stack was empty");
                 }
 
-                let new_sp = stack_pointer + 1;
-                self.set_ram(STACK_POINTER_ADDRESS, new_sp);
 
                 let resolved_dest = self.get_value(dest);
-                let top_of_stack_value = self.get_ram(new_sp as usize);
+                let top_of_stack_value = self.get_ram(stack_pointer as usize);
                 self.set_ram(resolved_dest as usize, top_of_stack_value);
 
                 trace!("popping value: {} from stack into address: {}",
                        top_of_stack_value,
                        resolved_dest);
+
+                let new_sp = stack_pointer + 1;
+                self.set_ram(STACK_POINTER_ADDRESS, new_sp);
             }
 
             // see self::syscalls module

@@ -59,8 +59,18 @@ They jump based on the comparison of the two parameters (`==`, `!=`, `>`, and `<
 `jump label` is also supported, for unconditional jumping
 
 ## The stack
-The stack can be pushed and popped from using the `push value` command, and the `pop -> destination` command. The stack pointer is at location `2000`, and its initial value is `2999`. This means the first value pushed to the stack will be at address 2999, the next at 2998. Attempting to pop from an empty stack will trigger an error, as will attempting to push onto a full stack.  
-**Example**: `push 'a /*commands*/ pop -> 0 syscall print_char` will print `a` to the console
+The stack can be pushed and popped from using the `push value` command, and the `pop -> destination` command. The stack pointer is at address 2000, and its initial value is 3000. This means the first value pushed to the stack will be at address 2999, the next at 2998. Attempting to pop from an empty stack will trigger an error, as will attempting to push onto a full stack.  
+Since the stack pointer is at address 2000, you can "peek" at the top of the stack with `@@2000`.  
+You can also manually push onto the stack (this is useful for pushing large amounts of data onto the stack) by copying your data to the top of the stack and then decrementing the pointer the necessary amount.  
+**Example**:
+```
+push 'a
+@@2000 -> 0
+syscall print_char
+pop -> 0
+syscall print_char
+```
+will print `aa` to the console. (the first a is from peeking at the stack and not decrementing the pointer, and the second one is from the pop command)
 
 ## Syscalls
 **Syntax**: `syscall name`
