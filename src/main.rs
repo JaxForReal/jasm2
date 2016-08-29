@@ -57,7 +57,7 @@ fn main() {
         "info" => log::LogLevelFilter::Info,
         "debug" => log::LogLevelFilter::Debug,
         "trace" => log::LogLevelFilter::Trace,
-        _ => panic!("unknown log level"),
+        _ => unreachable!(),
     });
 
     let mut program = String::new();

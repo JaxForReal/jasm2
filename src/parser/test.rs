@@ -23,8 +23,8 @@ fn peg_values_addresses() {
 fn binary_ops() {
     assert_eq!(peg::command("add 3 4 -> 5").unwrap(),
                Command::Add(Value::U32(3), Value::U32(4), Value::U32(5)));
-    assert_eq!(peg::command("compare 3 4 -> 5").unwrap(),
-               Command::Compare(Value::U32(3), Value::U32(4), Value::U32(5)));
+    assert_eq!(peg::command("leftshift 3 4 -> 5").unwrap(),
+               Command::LeftShift(Value::U32(3), Value::U32(4), Value::U32(5)));
 }
 
 #[test]
