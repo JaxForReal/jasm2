@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use std::io::Write;
 #[cfg(feature = "graphics")]
 use std::ops;
-use std::process;
 
 #[cfg(feature = "graphics")]
 use graphics;
@@ -169,8 +168,6 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     fn error(&self, message: &str) -> ! {
         let ip = self.instruction_pointer;
-        println!("Error in instruction: `{:?}`", self.prog[ip]);
-        println!("{}", message);
-        process::exit(1);
+        panic!("Error in instruction: `{:?}`\n{}", self.prog[ip], message);
     }
 }

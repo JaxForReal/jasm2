@@ -13,42 +13,54 @@ fn print() {
     assert_eq!(str::from_utf8(&out).unwrap(), "3146453");
 }
 
-#[test]
-fn math_operators() {
-    let prog = &[Add(U32(345), U32(876), U32(0)),
-                 Sub(U32(945), U32(876), U32(1)),
-                 Mul(U32(345), U32(876), U32(2)),
-                 Div(U32(945), U32(121), U32(3))];
-    let mut vm = Vm::new(prog, io::sink());
-    vm.exec();
-    assert_eq!((345 + 876, 945 - 876, 345 * 876, 945 / 121),
-               (vm.get_ram(0), vm.get_ram(1), vm.get_ram(2), vm.get_ram(3)));
+// invocations come in this form:
+// program_run_test!{ test_name, &[Add(U32(1), U32(2), U32(3)), Ret], vm_ram_index => expected_value, another_ram_index => another_expected_value, should_panic("reason")}
+// the `should_panic bit` is optional (but not the semicolon)
+macro_rules! program_run_test {
+    {$test_name:ident, $program:expr, $($ram_index:expr=>$ram_value:expr),* } =>
+    {
+        #[should_panic]
+        #[test]
+        fn $test_name() {
+            let prog = $program;
+            let mut vm = Vm::new(prog, io::sink());
+            vm.exec();
+            $(
+                assert_eq!(vm.get_ram($ram_index), $ram_value);
+            )*
+        }
+    };
 }
 
-#[test]
-fn bit_operations() {
-    let prog = &[And(U32(563), U32(395), U32(0)),
-                 Or(U32(843), U32(237), U32(1)),
-                 Xor(U32(937), U32(183), U32(2)),
-                 Invert(U32(333), U32(3)),
-                 LeftShift(U32(173), U32(3), U32(4)),
-                 RightShift(U32(182), U32(2), U32(5))];
-    let mut vm = Vm::new(prog, io::sink());
-    vm.exec();
-    assert_eq!((563 & 395, 843 | 237, 937 ^ 183, !333, 173 << 3, 182 >> 2),
-               (vm.get_ram(0),
-                vm.get_ram(1),
-                vm.get_ram(2),
-                vm.get_ram(3),
-                vm.get_ram(4),
-                vm.get_ram(5)));
+program_run_test! { add, &[Add(U32(7537), U32(1745), U32(0))], 0 => 7537 + 1745 }
+program_run_test! { subtract, &[Sub(U32(7537), U32(1745), U32(0))], 0 => 7537 - 1745 }
+program_run_test! { multiply, &[Mul(U32(7537), U32(1745), U32(0))], 0 => 7537 * 1745 }
+program_run_test! { divide, &[Div(U32(7537), U32(1745), U32(0))], 0 => 7537 / 1745 }
+
+program_run_test! { left_shift, &[LeftShift(U32(7537), U32(5), U32(0))], 0 => 7537 << 5 }
+program_run_test! { right_shift, &[RightShift(U32(7537), U32(3), U32(0))], 0 => 7537 >>3 }
+program_run_test! { and, &[And(U32(7537), U32(1745), U32(0))], 0 => 7537 & 1745 }
+program_run_test! { or, &[Or(U32(7537), U32(1745), U32(0))], 0 => 7537 | 1745 }
+program_run_test! { xor, &[Xor(U32(7537), U32(1745), U32(0))], 0 => 7537 ^ 1745 }
+
+program_run_test! { invert, &[Invert(U32(7537), U32(0))], 0 => !7537 }
+program_run_test! { valueof, &[ValueOf(U32(7537), U32(0))], 0 => 7537 }
+
+program_run_test! {
+    data_command,
+    &[Data(vec![U32(2342), U32(2), U32(53421), U32(645645)], U32(5))],
+    5 => 2342, 6 => 2, 7 => 53421, 8 => 645645
 }
 
-#[test]
-fn data_command() {
-    let prog = &[Data(vec![U32(123), U32(456), U32(789)], U32(0))];
-    let mut vm = Vm::new(prog, io::sink());
-    vm.exec();
-    assert_eq!((123, 456, 789),
-               (vm.get_ram(0), vm.get_ram(1), vm.get_ram(2)));
+program_run_test! {
+    push,
+    &[Push(U32(2345)), Push(U32(946))],
+    super::STACK_POINTER_ADDRESS => super::INITIAL_STACK_POINTER - 2,
+    (super::INITIAL_STACK_POINTER - 1) as usize => 2345,
+    (super::INITIAL_STACK_POINTER - 2) as usize => 946
+}
+
+program_run_test! {
+    pop_empty,
+    &[Pop(U32(45))], 0 => 0
 }
