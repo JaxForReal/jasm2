@@ -73,7 +73,6 @@ fn main() {
         file_path
     };
 
-    info!("Starting preprocess stage");
     program = preprocessor::preprocess(&program, file_path.parent().unwrap());
 
     if matches.value_of("emit_type") == Some("preprocessed") {
@@ -93,15 +92,14 @@ fn main() {
         }
     }
 
-    info!("Starting run stage (VM)");
     let stdout = io::stdout();
     vm::Vm::new(&parsed_program, stdout).exec();
 }
 
-
+#[allow(unused_variables)]
 fn setup_logger(log_level: log::LogLevelFilter) {
     let logger_config = fern::DispatchConfig {
-        format: Box::new(|log: &str, level: &log::LogLevel, _: &log::LogLocation| {
+        format: Box::new(|log: &str, level: &log::LogLevel, location: &log::LogLocation| {
             let color_ansi = match *level {
                 log::LogLevel::Error => "31",// red
                 log::LogLevel::Warn => "33",// yellow
@@ -109,12 +107,20 @@ fn setup_logger(log_level: log::LogLevelFilter) {
                 log::LogLevel::Debug => "34",// blue
                 log::LogLevel::Trace => "35",// purple
             };
-
-            format!("{escape}[{color};1m{log_level}{escape}[0m {log}",
-                    escape = 27 as char,
-                    color = color_ansi,
-                    log = log,
-                    log_level = level)
+            if cfg!(not(feature = "show-log-locations")) {
+                format!("{escape}[{color};1m{log_level}{escape}[0m {log}",
+                        escape = 27 as char,
+                        color = color_ansi,
+                        log = log,
+                        log_level = level)
+            } else {
+                format!("[{location}] {escape}[{color};1m{log_level}{escape}[0m {log}",
+                        escape = 27 as char,
+                        color = color_ansi,
+                        log = log,
+                        log_level = level,
+                        location = location.module_path())
+            }
         }),
         output: vec![fern::OutputConfig::stdout()],
         level: log::LogLevelFilter::Trace,

@@ -90,9 +90,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     }
     // executes the program, writing all output to the `out` object
     pub fn exec(&mut self) {
-        info!("building label table");
+        info!("Starting run stage (VM)");
         self.build_label_table();
-
+        info!("Running...");
+        
         // make the sp point to initial stack address
         self.set_ram(STACK_POINTER_ADDRESS, INITIAL_STACK_POINTER);
 
@@ -158,6 +159,8 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     fn copy_ram_to_graphics_buffer(&mut self, index: usize, value: u32) {}
 
     fn build_label_table(&mut self) {
+        info!("Building label table");
+        
         for (index, command) in self.prog.iter().enumerate() {
             if let Command::Label(name) = *command {
                 trace!("found label: '{}' at command index: {}", name, index);

@@ -11,15 +11,16 @@ mod test;
 // containing_path is the full path of program that is being processed
 // including the file itself, eg "/home/me/Documents/my_program.jasm"
 pub fn preprocess(program: &str, containing_path: &Path) -> String {
-    info!("Preprocessing include statements");
+    info!("Starting preprocess stage");
     let included = process_includes(program, containing_path);
-    info!("Preprocessing define statementes");
     process_defines(&included)
 }
 
 // replaces `#include "path/to/file.j"` with the contents of <project root>/path/to/file.j
 // the path is relative to the parent directory of the file being compiled
 fn process_includes(program: &str, containing_path: &Path) -> String {
+    info!("Preprocessing include statements");
+    
     let include_regex = Regex::new(r#"#include\s+"(?P<relative_path>.+?)""#).unwrap();
 
     include_regex.replace_all(program, |captures: &Captures| {
@@ -52,6 +53,8 @@ fn get_contents(file_path: &Path) -> String {
 // searches through the entire program and replaces CONST_NAME with value,
 // even if CONST_NAME occurs before the #define statement
 fn process_defines(program: &str) -> String {
+    info!("Preprocessing define statementes");
+    
     let define_regex =
         Regex::new(r#"(?m)#define\s+(?P<find>[a-zA-Z0-9_'@`]+)\s+(?P<replace>[a-zA-Z0-9_'@`]+)"#)
             .unwrap();
