@@ -20,7 +20,7 @@ pub fn preprocess(program: &str, containing_path: &Path) -> String {
 // the path is relative to the parent directory of the file being compiled
 fn process_includes(program: &str, containing_path: &Path) -> String {
     info!("Preprocessing include statements");
-    
+
     let include_regex = Regex::new(r#"#include\s+"(?P<relative_path>.+?)""#).unwrap();
 
     include_regex.replace_all(program, |captures: &Captures| {
@@ -54,7 +54,7 @@ fn get_contents(file_path: &Path) -> String {
 // even if CONST_NAME occurs before the #define statement
 fn process_defines(program: &str) -> String {
     info!("Preprocessing define statementes");
-    
+
     let define_regex =
         Regex::new(r#"(?m)#define\s+(?P<find>[a-zA-Z0-9_'@`]+)\s+(?P<replace>[a-zA-Z0-9_'@`]+)"#)
             .unwrap();

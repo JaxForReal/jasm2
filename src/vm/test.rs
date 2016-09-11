@@ -14,7 +14,8 @@ fn print() {
 }
 
 // invocations come in this form:
-// program_run_test!{ test_name, &[Add(U32(1), U32(2), U32(3)), Ret], vm_ram_index => expected_value, another_ram_index => another_expected_value, should_panic("reason")}
+// `program_run_test!{ test_name, &[Add(U32(1), U32(2), U32(3)), Ret], vm_ram_index =>
+// expected_value, another_ram_index => another_expected_value, should_panic("reason")}`
 // the `should_panic bit` is optional (but not the semicolon)
 macro_rules! program_run_test {
     {$test_name:ident, $program:expr, $($ram_index:expr=>$ram_value:expr),* } =>
