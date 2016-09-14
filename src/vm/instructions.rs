@@ -3,6 +3,7 @@ use parser::syntax::Value;
 use parser::syntax::Command;
 use parser::syntax::Command::*;
 use std::io::Write;
+use std::num::Wrapping;
 
 use super::STACK_POINTER_ADDRESS;
 
@@ -16,8 +17,12 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
             Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
             Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a / b),
 
-            LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
-            RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
+            LeftShift(ref l, ref r, ref d) => {
+                self.auto_binary_op(l, r, d, |a, b| a << b.0 as usize)
+            }
+            RightShift(ref l, ref r, ref d) => {
+                self.auto_binary_op(l, r, d, |a, b| a >> b.0 as usize)
+            }
 
             And(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a & b),
             Or(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a | b),
@@ -119,17 +124,20 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // performs a binary operation based on a simple fn(u32, u32) -> u32 closure
     // given left, right, and destination vals from parser
+
+    // also uses std::num::Wrapping, so all operations using this function wrap
     fn auto_binary_op<TFunc>(&mut self,
                              left: &Value,
                              right: &Value,
                              dest: &Value,
                              operation: TFunc)
-        where TFunc: Fn(u32, u32) -> u32
+        where TFunc: Fn(Wrapping<u32>, Wrapping<u32>) -> Wrapping<u32>
     {
         let dest_val = self.get_value(dest) as usize;
 
-        let result = operation(self.get_value(left), self.get_value(right));
-        self.set_ram(dest_val, result);
+        let result = operation(Wrapping(self.get_value(left)),
+                               Wrapping(self.get_value(right)));
+        self.set_ram(dest_val, result.0);
     }
 
     // takes a closure and argument/destination values and performs that closure on those values
