@@ -11,10 +11,10 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
     // returns whether or not execution should ocntinue after this command;
     pub fn exec_single_command(&mut self, command: &Command) -> bool {
         match *command {
-            Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a + b),
-            Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a - b),
-            Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a * b),
-            Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a / b),
+            Add(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a.wrapping_add(b)),
+            Sub(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a.wrapping_sub(b)),
+            Mul(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a.wrapping_mul(b)),
+            Div(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a.wrapping_div(b)),
 
             LeftShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a << b),
             RightShift(ref l, ref r, ref d) => self.auto_binary_op(l, r, d, |a, b| a >> b),
