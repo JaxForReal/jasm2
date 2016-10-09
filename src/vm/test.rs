@@ -20,7 +20,6 @@ fn print() {
 macro_rules! program_run_test {
     {$test_name:ident, $program:expr, $($ram_index:expr=>$ram_value:expr),* } =>
     {
-        #[should_panic]
         #[test]
         fn $test_name() {
             let prog = $program;
@@ -61,7 +60,10 @@ program_run_test! {
     (super::INITIAL_STACK_POINTER - 2) as usize => 946
 }
 
-program_run_test! {
-    pop_empty,
-    &[Pop(U32(45))], 0 => 0
+#[test]
+#[should_panic(expected = "attempted to pop when the stack was empty")]
+fn pop_empty() {
+    let prog = &[Pop(U32(0))];
+    let mut vm = Vm::new(prog, io::sink());
+    vm.exec();
 }

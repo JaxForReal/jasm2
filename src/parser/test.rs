@@ -6,7 +6,7 @@ fn peg_values_literals() {
     assert_eq!(peg::value("132435").unwrap(), Value::U32(132435));
     assert_eq!(peg::value("b101011100001").unwrap(),
                Value::U32(0b101011100001));
-    assert_eq!(peg::value("'a").unwrap(), Value::U32(97));
+    assert_eq!(peg::value("'a'").unwrap(), Value::U32(97));
 }
 
 #[test]
