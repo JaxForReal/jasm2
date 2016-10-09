@@ -24,7 +24,9 @@ use std::process;
 use clap::{App, Arg};
 
 fn main() {
-    let matches = App::new("JASM interpreter")
+    let matches = App::new("JASM Interpreter")
+        .version("versionNumbersAreAPain.0.1")
+        .about("Interprets JASM assembly. See http://github.com/JaxForReal/jasm2/DOCUMENTATION.md")
         .author("Liam Pribis <liampribis@gmail.com>")
         .arg(Arg::with_name("filename")
             .index(1)
