@@ -117,8 +117,21 @@ impl<'a, TOut: Write> Vm<'a, TOut> {
 
     // delay for @0 milliseconds
     fn delay(&mut self) {
-        let time = self.get_ram(0);
-        thread::sleep(time::Duration::from_millis(time as u64));
+        let len = self.get_ram(0);
+        self.delay_internal(len);
+    }
+
+    #[cfg(feature = "graphics")]
+    fn delay_internal(&mut self, len: u32) {
+        match self.sdl {
+            Some(ref mut sdl) => sdl.timer.delay(len),
+            None => thread::sleep(time::Duration::from_millis(len as u64)),
+        };
+    }
+
+    #[cfg(not(feature = "graphics"))]
+    fn delay_internal(&self, len: u32) {
+        thread::sleep(time::Duration::from_millis(len as u64));
     }
 
     // sets the mode based on @0

@@ -138,4 +138,4 @@ binary_integer -> u32
     = "b" [0-1]+ { u32::from_str_radix(&match_str[1..], 2).unwrap() }
 
 ascii_integer -> u32
-    = "'" . { match_str.chars().nth(1).unwrap() as u32}
+    = "'" . "'" { match_str.chars().nth(1).unwrap() as u32}
