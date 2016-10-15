@@ -1,5 +1,7 @@
 
 ### CLI
+----
+
 ```
 USAGE:
     jasm2 [OPTIONS] <filename>
@@ -67,6 +69,7 @@ This means you can peek at the top of stack without popping with `@@2000`. Yuo c
 * ``data `string` -> dest`` stores each character to its own cell starting at dest
 
 ### Syscalls
+----
 #### In any mode
 * `syscall set_mode` (argument in cell 0) 0 means change to console mode, anything else is graphics mode. You can go from console mode to graphics mode, but not back. Eg. to set graphics mode: `1 -> 0 syscall set_mode` (only in interpreters with "graphics" feature)
 * `syscall delay` gets the value in cell 0, and pauses for that many milliseconds

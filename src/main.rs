@@ -82,7 +82,6 @@ fn main() {
         process::exit(0);
     }
 
-    info!("starting parsing stage");
     let parsed_program = match parser::try_parse(&program) {
         Ok(prog) => prog,
         Err(err) => panic!("Error parsing: {}", err),
